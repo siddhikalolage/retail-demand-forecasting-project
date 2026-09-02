@@ -1,0 +1,267 @@
+version: 2
+
+models:
+  - name: dim_calendar
+    description: "Calendar dimension. One row per date. Surrogate date_key via dbt_utils.generate_surrogate_key. Currently ~1,079 rows mirroring the dates extracted to Snowflake (2011-01-29 through 2014-03-21 with gaps). In production this would be a procedurally-generated full date spine — flagged for Phase 6 polish or Project 3."
+
+    columns:
+
+      - name: date_key
+        description: "Surrogate key. MD5 hash of calendar_date, 32-char hex string."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: calendar_date
+        description: "Natural key. Real DATE, cast upstream from M5's VARCHAR date."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: d
+        description: "M5 day identifier ('d_NNNN'). Carried through for traceability to raw. NULL on future-horizon rows added to support forecast date slicing."
+        data_tests:
+          - not_null:
+              config:
+                where: "calendar_date <= DATE '2014-03-23'"
+
+      - name: is_weekend
+        description: "TRUE on Saturday and Sunday (via DAYNAME, convention-independent)."
+        data_tests:
+          - not_null
+
+      - name: is_holiday
+        description: "TRUE when event_name_1 OR event_name_2 is non-null. FALSE on future-horizon rows."
+        data_tests:
+          - not_null
+
+      - name: wm_yr_wk
+        description: "Walmart fiscal year+week. Passthrough from M5. NULL on future-horizon rows."
+        data_tests:
+          - not_null:
+              config:
+                where: "calendar_date <= DATE '2014-03-23'"
+
+      - name: snap_ca
+        description: "SNAP (food stamp) redemption window open in California. 0 or 1. NULL on future-horizon rows."
+        data_tests:
+          - not_null:
+              config:
+                where: "calendar_date <= DATE '2014-03-23'"
+
+      - name: snap_tx
+        description: "SNAP redemption window open in Texas. 0 or 1. NULL on future-horizon rows."
+        data_tests:
+          - not_null:
+              config:
+                where: "calendar_date <= DATE '2014-03-23'"
+
+      - name: snap_wi
+        description: "SNAP redemption window open in Wisconsin. 0 or 1. NULL on future-horizon rows."
+        data_tests:
+          - not_null:
+              config:
+                where: "calendar_date <= DATE '2014-03-23'"
+
+  - name: dim_item
+    description: "Item dimension. One row per distinct M5 item (~3,049 rows). Surrogate item_key via dbt_utils.generate_surrogate_key on item_id. Hierarchy: cat_id → dept_id → item_id (denormalised here so Power BI can roll up either level without re-joining)."
+
+    columns:
+
+      - name: item_key
+        description: "Surrogate key. MD5 hash of item_id, 32-char hex string."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: item_id
+        description: "Natural key. M5 item identifier, e.g. HOBBIES_1_001."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: dept_id
+        description: "Department identifier, e.g. HOBBIES_1. 7 distinct values."
+        data_tests:
+          - not_null
+
+      - name: cat_id
+        description: "Category identifier, e.g. HOBBIES. 3 distinct values (HOBBIES, FOODS, HOUSEHOLD)."
+        data_tests:
+          - not_null
+
+  - name: dim_store
+    description: "Store dimension. One row per distinct M5 store (~10 rows). Surrogate store_key via dbt_utils.generate_surrogate_key on store_id. M5 stores are organised by state: 4 CA + 3 TX + 3 WI."
+
+    columns:
+
+      - name: store_key
+        description: "Surrogate key. MD5 hash of store_id, 32-char hex string."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: store_id
+        description: "Natural key. M5 store identifier, e.g. CA_1, TX_2, WI_3."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: state_id
+        description: "State identifier. 3 distinct values (CA, TX, WI)."
+        data_tests:
+          - not_null
+
+  - name: fact_daily_sales
+    description: "Daily sales fact. Grain = one row per item × store × day. ~32.9M rows full load. Incremental on sale_date, clustered on sale_date. FK surrogates (item_key, store_key, date_key) computed via the same generate_surrogate_key inputs as the three dims, so FK-PK matching is by construction."
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - item_id
+              - store_id
+              - sale_date
+
+    columns:
+
+      - name: sale_key
+        description: "Surrogate row key. MD5 hash of (item_id, store_id, sale_date). Unique row identifier."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: item_key
+        description: "FK to dim_item.item_key. MD5 hash of item_id."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_item')
+                field: item_key
+
+      - name: store_key
+        description: "FK to dim_store.store_key. MD5 hash of store_id."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_store')
+                field: store_key
+
+      - name: date_key
+        description: "FK to dim_calendar.date_key. MD5 hash of sale_date."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_calendar')
+                field: date_key
+
+      - name: item_id
+        description: "Natural item key. Carried through for traceability."
+        data_tests:
+          - not_null
+
+      - name: store_id
+        description: "Natural store key. Carried through for traceability."
+        data_tests:
+          - not_null
+
+      - name: sale_date
+        description: "Date of the sales observation. Clustering key."
+        data_tests:
+          - not_null
+
+      - name: units_sold
+        description: "Units sold on this item × store × day. Non-negative integer; zero is a legitimate 'product on shelf, didn't sell' signal."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+
+      - name: sell_price
+        description: "Item price at this store for the fiscal week containing sale_date. Nullable by design — NULL means the item wasn't on sale that week (M5 product lifecycle)."
+
+      - name: revenue_amount_usd
+        description: "units_sold * sell_price. Nullable when sell_price is NULL."
+
+  - name: fact_forecast_daily
+    description: "Daily forecast fact at item × day grain. Sourced from Snowflake Cortex ML FORECAST output. Item-level forecast (units summed across stores per item per day) over a 28-day horizon. ~85K rows. Conforms keys to the warehouse star — item_key matches dim_item; date_key surrogate of forecast_date (future dates not in dim_calendar, so relationships test on date_key is intentionally skipped)."
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - item_id
+              - forecast_date
+
+    columns:
+
+      - name: forecast_key
+        description: "Surrogate row key. MD5 hash of (item_id, forecast_date)."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: item_key
+        description: "FK to dim_item.item_key. MD5 hash of item_id."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_item')
+                field: item_key
+
+      - name: date_key
+        description: "Surrogate of forecast_date. NOT tested against dim_calendar because forecast dates are future (extend dim_calendar to enable PBI date slicing)."
+        data_tests:
+          - not_null
+
+      - name: item_id
+        description: "Natural item key. Carried through for traceability."
+        data_tests:
+          - not_null
+
+      - name: forecast_date
+        description: "Future date being forecasted. 28-day horizon from MAX(sale_date) in the training data."
+        data_tests:
+          - not_null
+
+      - name: forecast_units
+        description: "Predicted units sold for that (item, forecast_date). Floored at 0."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+
+      - name: forecast_revenue_usd
+        description: "forecast_units × avg_recent_price for that item. Floored at 0. Recent price = average sell_price over the last 28 days of actuals; NULL-priced items contribute zero."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+
+      - name: forecast_units_lower_95
+        description: "95% CI lower bound for forecast_units. Floored at 0."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+
+      - name: forecast_units_upper_95
+        description: "95% CI upper bound for forecast_units. Floored at 0."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true

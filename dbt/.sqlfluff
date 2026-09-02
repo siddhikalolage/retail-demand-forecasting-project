@@ -1,0 +1,44 @@
+# =============================================================================
+# sqlfluff config — Snowflake dialect, dbt templater
+# =============================================================================
+# Lint config for the dbt project. Runs locally via `sqlfluff lint models/` and
+# in CI via .github/workflows/dbt-ci.yml. Uses the `dbt` templater (not jinja)
+# so package macros like dbt_utils.generate_surrogate_key resolve correctly.
+# The dbt templater runs `dbt parse` under the hood — no Snowflake connection
+# is made at parse time, so dummy env vars are safe in CI.
+# =============================================================================
+
+[sqlfluff]
+dialect = snowflake
+templater = dbt
+exclude_rules = LT05, RF02, ST05
+# LT05 — line length: relaxed because dbt-generated SQL often exceeds 80 chars
+# RF02 — qualified references: false-positives against dbt source()/ref() macros
+# ST05 — subquery rewrites: dbt CTE chains are intentional, not refactor candidates
+max_line_length = 120
+
+[sqlfluff:indentation]
+indent_unit = space
+tab_space_size = 4
+
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = upper
+
+[sqlfluff:rules:capitalisation.identifiers]
+capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.functions]
+capitalisation_policy = upper
+
+[sqlfluff:rules:capitalisation.types]
+capitalisation_policy = upper
+
+[sqlfluff:rules:capitalisation.literals]
+capitalisation_policy = upper
+
+[sqlfluff:templater:dbt]
+# Both default to '.' but spelled out for clarity. sqlfluff is run from the
+# dbt/ directory in both local and CI contexts, so '.' resolves to the dbt
+# project root where dbt_project.yml + profiles.yml live.
+project_dir = .
+profiles_dir = .
