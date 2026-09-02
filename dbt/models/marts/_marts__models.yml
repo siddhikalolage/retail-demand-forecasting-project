@@ -180,3 +180,238 @@ models:
           - accepted_values:
               arguments:
                 values: ['actual', 'forecast']
+
+  - name: mart_sales_by_category
+    description: "Category-level sales analysis. Aggregates sales across all stores per date × category × department. Supports category trend analysis, seasonal patterns, and department performance comparison. ~13,600 rows (7 departments × ~1,941 days). PK: (date_key, category_name, department_name)."
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - date_key
+              - category_name
+              - department_name
+
+    columns:
+      - name: date_key
+        description: "FK to dim_calendar.date_key. Part of compound PK."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_calendar')
+                field: date_key
+
+      - name: sale_date
+        description: "Natural date (calendar_date from dim_calendar). Facilitates date filtering in BI tools."
+        data_tests:
+          - not_null
+
+      - name: category_name
+        description: "Item category (FOODS, HOUSEHOLD, HOBBIES). Part of compound PK."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["FOODS", "HOUSEHOLD", "HOBBIES"]
+
+      - name: department_name
+        description: "Department within category (e.g., FOODS_1, FOODS_2, etc.). Part of compound PK. ~7 departments total."
+        data_tests:
+          - not_null
+
+      - name: total_units_sold
+        description: "SUM(units_sold) for the (date, category, department) combination."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+
+      - name: total_revenue_usd
+        description: "SUM(revenue_amount_usd) for the (date, category, department) combination."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+
+      - name: active_item_count
+        description: "COUNT(DISTINCT item_id) for the (date, category, department) combination. Indicates product diversity selling on the date."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: avg_price
+        description: "AVG(sell_price) for the date/category/department. NULL prices excluded."
+
+      - name: avg_revenue_per_unit
+        description: "total_revenue_usd / total_units_sold. Proxy for pricing power."
+
+  - name: mart_sales_by_store
+    description: "Store-level sales analysis. One row per store × date. Enables store performance comparison, regional analysis, and inventory/staffing decisions. ~19,400 rows (10 stores × ~1,941 days). PK: (date_key, store_id)."
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - date_key
+              - store_id
+
+    columns:
+      - name: date_key
+        description: "FK to dim_calendar.date_key. Part of compound PK."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_calendar')
+                field: date_key
+
+      - name: sale_date
+        description: "Natural date (calendar_date from dim_calendar)."
+        data_tests:
+          - not_null
+
+      - name: store_id
+        description: "Store identifier (e.g., CA_1, TX_2, WI_3). Part of compound PK. M5 has 10 stores."
+        data_tests:
+          - not_null
+
+      - name: state_id
+        description: "State identifier (CA, TX, WI). Enables regional aggregation."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["CA", "TX", "WI"]
+
+      - name: active_item_count
+        description: "COUNT(DISTINCT item_id) for the (date, store) combination. Store product availability indicator."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+      - name: total_units_sold
+        description: "SUM(units_sold) for the (date, store) combination."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+
+      - name: total_revenue_usd
+        description: "SUM(revenue_amount_usd) for the (date, store) combination."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+
+      - name: avg_revenue_per_unit
+        description: "total_revenue_usd / total_units_sold. Store-level pricing/mix indicator."
+
+      - name: avg_price
+        description: "AVG(sell_price) for the (date, store) combination. Store-specific pricing patterns."
+
+  - name: mart_forecast_evaluation
+    description: >
+      Historical holdout evaluation benchmark for the retail demand forecasting
+      pipeline. Uses a transparent 28-day trailing-average baseline at item-day
+      grain. This is a historical benchmark, not production Cortex forecast
+      accuracy, because M5 does not provide actuals for the production forecast
+      horizon.
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - item_id
+              - evaluation_date
+
+    columns:
+      - name: item_id
+        description: "Natural item identifier."
+        data_tests:
+          - not_null
+
+      - name: evaluation_date
+        description: "Historical date being evaluated."
+        data_tests:
+          - not_null
+
+      - name: actual_units
+        description: "Observed item-level units on the evaluation date."
+        data_tests:
+          - not_null
+
+      - name: baseline_forecast_units
+        description: "28-day trailing-average historical baseline forecast."
+        data_tests:
+          - not_null
+
+      - name: absolute_error
+        description: "Absolute difference between actual and baseline forecast."
+        data_tests:
+          - not_null
+
+      - name: squared_error
+        description: "Squared forecast error."
+        data_tests:
+          - not_null
+
+      - name: signed_error
+        description: "Actual minus forecast; positive indicates under-forecasting."
+
+      - name: absolute_percentage_error
+        description: "Absolute percentage error; NULL when actual demand is zero."
+
+      - name: signed_percentage_error
+        description: "Signed percentage error; NULL when actual demand is zero."
+
+  - name: mart_forecast_evaluation_summary
+    description: >
+      Aggregate MAE, RMSE, WAPE and signed bias for the historical
+      trailing-average benchmark. Overall and item-level metrics are provided.
+      These metrics are historical benchmark results and are not production
+      Cortex forecast accuracy.
+
+    columns:
+      - name: aggregation_level
+        description: "Metric aggregation level: overall or item."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['overall', 'item']
+
+      - name: evaluated_observations
+        description: "Number of historical item-day observations evaluated."
+        data_tests:
+          - not_null
+
+      - name: mae
+        description: "Mean absolute error of the historical benchmark."
+        data_tests:
+          - not_null
+
+      - name: rmse
+        description: "Root mean squared error of the historical benchmark."
+        data_tests:
+          - not_null
+
+      - name: wape
+        description: "Weighted absolute percentage error of the historical benchmark."
+
+      - name: bias
+        description: >
+          Signed forecast error divided by actual demand. Positive indicates
+          systematic under-forecasting.
