@@ -1348,7 +1348,7 @@ Discovered during Phase 5 session 5.6 while adding `is_snap_day` to `DIM_CALENDA
 
 **Why the same formula bar exposes both:** Microsoft chose UI parsimony over discoverability. The exact same DAX syntax can mean two completely different things depending on whether you clicked New column or New measure five seconds ago. Discipline rule: ALWAYS double-check the ribbon button before pasting a formula.
 
-**Carry-forward.** Any time PBI surfaces "Cannot find name [column]" on a reference the project owner can verify exists in the Data pane, the FIRST diagnostic check is "did I click New measure or New column?" — not "is the column name wrong?", not "is there a typo?", not "is Intellisense broken?". Saved ~10 min of misdirected diagnostics this session; would have saved more if checked first.
+**Carry-forward.** Any time PBI surfaces "Cannot find name [column]" on a reference the user can verify exists in the Data pane, the FIRST diagnostic check is "did I click New measure or New column?" — not "is the column name wrong?", not "is there a typo?", not "is Intellisense broken?". Saved ~10 min of misdirected diagnostics this session; would have saved more if checked first.
 
 ### 2026-05-21 — Snowflake unquoted identifiers stored as UPPERCASE carry through to Power BI column names
 
@@ -1386,11 +1386,11 @@ Discovered during Phase 5 session 5.6 while building the Forecast vs Actual matr
 
 ### 2026-05-21 — Power BI format pane section names vary by visual type (Bars / Columns / Markers / Slices)
 
-Surfaced during Phase 5 session 5.7 polish pass when I (Claude) repeatedly told the project owner to click "Format → Visual → **Bars** → Colors" for the Average Selling Price chart on Promotion & Price. The dropdown didn't exist because the chart was a **clustered column** (vertical bars), not a horizontal bar chart — and in the new Power BI Desktop format pane the section is called **Columns** for column charts, **Bars** for bar charts, **Markers** for scatter / bubble charts, and **Slices** for pie / donut charts. Each parent section contains the visual's color controls, but the parent's name follows the visual type, not a uniform "Colors" parent.
+Surfaced during Phase 5 session 5.7 polish pass when I (Claude) repeatedly gave the user the instruction to click "Format → Visual → **Bars** → Colors" for the Average Selling Price chart on Promotion & Price. The dropdown didn't exist because the chart was a **clustered column** (vertical bars), not a horizontal bar chart — and in the new Power BI Desktop format pane the section is called **Columns** for column charts, **Bars** for bar charts, **Markers** for scatter / bubble charts, and **Slices** for pie / donut charts. Each parent section contains the visual's color controls, but the parent's name follows the visual type, not a uniform "Colors" parent.
 
 **The chain.** The "old" Power BI format pane had a flat-ish structure with "Data colors" as a near-universal subsection at the top level of the Visualizations format pane — same name across most visual types. The redesigned pane (rolled out 2023-2024 and now standard in 2026) groups formatting controls under visual-type-specific parent sections. Same control, different parent label. Made worse by the fact that conditional formatting (`fx` button) lives inside whichever parent section the colors are under — so the click path is different for each visual type.
 
-**Practical impact during 5.7.** I gave the project owner three wrong paths in a row before he insisted I deep-think and web-check the actual UI. Confirmed via Microsoft Learn:
+**Practical impact during 5.7.** I gave the user three wrong paths in a row before he insisted I deep-think and web-check the actual UI. Confirmed via Microsoft Learn:
 
 - Bar chart (horizontal) → Format → Visual → **Bars** → Color → fx
 - Column chart (vertical) → Format → Visual → **Columns** → Color → fx
@@ -1398,7 +1398,7 @@ Surfaced during Phase 5 session 5.7 polish pass when I (Claude) repeatedly told 
 - Donut / pie → Format → Visual → **Slices** → Colors → fx
 - Line chart → Format → Visual → **Lines** → Colors
 
-**Carry-forward discipline.** When giving Power BI format-pane click paths in 5.8 and beyond, web-check the visual type's parent section name FIRST if I can't see the Format pane directly in the user's screenshot. Don't assume a generic "Colors" parent. If a path doesn't click, ask the user what parent sections are visible in their pane rather than guessing again. Cost ~10 minutes mid-session before the project owner pushed back; cheap to avoid in future by visual-type-checking upfront.
+**Carry-forward discipline.** When giving Power BI format-pane click paths in 5.8 and beyond, web-check the visual type's parent section name FIRST if I can't see the Format pane directly in the user's screenshot. Don't assume a generic "Colors" parent. If a path doesn't click, ask the user what parent sections are visible in their pane rather than guessing again. Cost ~10 minutes mid-session before the user pushed back; cheap to avoid in future by visual-type-checking upfront.
 
 **Edge cases worth knowing:**
 
@@ -1408,9 +1408,9 @@ Surfaced during Phase 5 session 5.7 polish pass when I (Claude) repeatedly told 
 
 ### 2026-05-21 — Power BI new Card visual Reference labels field well is variant-dependent (basic-license PBI Desktop is missing it)
 
-Surfaced during Phase 5 session 5.7 polish pass when trying to add a YoY % indicator to the Total Revenue card on Executive Overview. Standard pattern for the new Card visual (Nov 2025 GA) is to drag the YoY measure into the **Reference labels** field well — gives a small secondary value below the main number, color-coded against the change. The screenshot of the project owner's Build visual pane on the card showed only: **Value, Categories, Tooltips, Drill through**. No Reference labels field well.
+Surfaced during Phase 5 session 5.7 polish pass when trying to add a YoY % indicator to the Total Revenue card on Executive Overview. Standard pattern for the new Card visual (Nov 2025 GA) is to drag the YoY measure into the **Reference labels** field well — gives a small secondary value below the main number, color-coded against the change. The screenshot of the Build visual pane on the card showed only: **Value, Categories, Tooltips, Drill through**. No Reference labels field well.
 
-**The chain.** The new Card visual's Reference labels feature shipped as part of the November 2025 GA release, but the field well's exposure in the Build pane appears to be license-tier-gated or variant-specific. the project owner is running stock-standard Power BI Desktop with no Pro / PPU / Premium license. Microsoft's documentation describes Reference labels as a core feature of the new Card visual; community threads from late 2025 / early 2026 show two distinct Build-pane variants — one with Reference labels exposed, one without — with no clear pattern as to which license tier or feature flag drives the difference. The Reference labels field well is sometimes present in identical-version PBI Desktop installs on different machines.
+**The chain.** The new Card visual's Reference labels feature shipped as part of the November 2025 GA release, but the field well's exposure in the Build pane appears to be license-tier-gated or variant-specific. The user is running stock-standard Power BI Desktop with no Pro / PPU / Premium license. Microsoft's documentation describes Reference labels as a core feature of the new Card visual; community threads from late 2025 / early 2026 show two distinct Build-pane variants — one with Reference labels exposed, one without — with no clear pattern as to which license tier or feature flag drives the difference. The Reference labels field well is sometimes present in identical-version PBI Desktop installs on different machines.
 
 **Practical impact during 5.7.** I'd planned 5 time-intelligence visuals on Exec Overview (YoY % pill, YTD line overlay, 30-day MA, etc.). The YoY % visualization was meant to use Reference labels on the Total Revenue card. With the field well unavailable, the only paths forward were:
 
@@ -1967,3 +1967,5 @@ _(to be populated as questions come up)_
 > What I want to do from day one of the financial markets / lakehouse project.
 
 _(to be populated near end of Project #2)_
+
+

@@ -415,3 +415,116 @@ models:
         description: >
           Signed forecast error divided by actual demand. Positive indicates
           systematic under-forecasting.
+  - name: mart_forecast_backtest
+    description: >
+      Calendar-complete rolling-origin historical benchmark for demand
+      forecasting. Uses a 28-day trailing-average baseline and evaluates
+      28-day future horizons. This model evaluates historical benchmark
+      performance and does not retrain or modify the production Cortex model.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - item_id
+              - forecast_origin_date
+              - horizon_day
+    columns:
+      - name: item_id
+        description: Item identifier.
+        tests:
+          - not_null
+
+      - name: forecast_origin_date
+        description: Historical date at which the benchmark forecast is generated.
+        tests:
+          - not_null
+
+      - name: horizon_day
+        description: Forecast horizon from 1 through 28 days.
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 28
+
+      - name: forecast_date
+        description: Future calendar date being evaluated.
+        tests:
+          - not_null
+
+      - name: actual_units
+        description: Observed demand, including zero-demand calendar days.
+        tests:
+          - not_null
+
+      - name: baseline_forecast_units
+        description: 28-day trailing-average benchmark forecast.
+        tests:
+          - not_null
+
+      - name: absolute_error
+        description: Absolute difference between actual and benchmark forecast.
+        tests:
+          - not_null
+
+      - name: squared_error
+        description: Squared forecast error used for RMSE.
+        tests:
+          - not_null
+
+      - name: signed_error
+        description: Actual demand minus benchmark forecast. Positive values indicate under-forecasting.
+        tests:
+          - not_null
+
+  - name: mart_forecast_backtest_summary
+    description: >
+      Portfolio-level and horizon-level accuracy metrics for the historical
+      rolling-origin benchmark. Metrics include MAE, RMSE, WAPE and bias.
+      These metrics evaluate the transparent historical benchmark, not the
+      production Snowflake Cortex forecast.
+    columns:
+      - name: aggregation_level
+        description: Overall portfolio metric or individual forecast horizon.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - overall
+                  - horizon
+
+      - name: horizon_day
+        description: Forecast horizon for horizon-level metrics; NULL for overall metrics.
+
+      - name: evaluated_observations
+        description: Number of item-horizon observations evaluated.
+        tests:
+          - not_null
+
+      - name: forecast_origins
+        description: Number of historical forecast origins represented.
+        tests:
+          - not_null
+
+      - name: items_evaluated
+        description: Number of distinct items evaluated.
+        tests:
+          - not_null
+
+      - name: mae
+        description: Mean absolute error.
+        tests:
+          - not_null
+
+      - name: rmse
+        description: Root mean squared error.
+        tests:
+          - not_null
+
+      - name: wape
+        description: Weighted absolute percentage error.
+
+      - name: bias
+        description: Signed forecast error divided by total actual demand.

@@ -1,17 +1,17 @@
 ﻿-- mart_forecast_backtest.sql
--- Rolling-origin historical backtest for a transparent demand baseline.
+-- Calendar-complete rolling-origin historical benchmark.
 --
 -- IMPORTANT:
--- This evaluates a historical benchmark, NOT the production Cortex model.
--- The production Cortex forecast is trained on the full available history and
--- does not have post-cutoff actuals in the M5 dataset.
+-- This evaluates a transparent historical baseline, NOT the production
+-- Snowflake Cortex forecast.
 --
 -- Method:
---   1. Select historical forecast origins every 28 days.
---   2. At each origin, calculate average item demand over the previous
---      28 calendar days only.
---   3. Use that average as the forecast for horizons 1 through 28.
---   4. Compare each forecast with the observed future demand.
+--   1. Build a complete item x calendar-day grid.
+--   2. Treat missing sales rows as zero demand.
+--   3. Select forecast origins every 28 days.
+--   4. Calculate the previous 28 calendar days' average demand.
+--   5. Forecast horizons 1 through 28.
+--   6. Compare forecasts against the complete future demand series.
 --
 -- Grain: item_id x forecast_origin_date x horizon_day
 
@@ -19,7 +19,23 @@
     materialized='table'
 ) }}
 
-WITH daily_item_sales AS (
+WITH calendar AS (
+
+    SELECT DISTINCT
+        calendar_date AS sale_date
+    FROM {{ ref('dim_calendar') }}
+
+),
+
+items AS (
+
+    SELECT DISTINCT
+        item_id
+    FROM {{ ref('fact_daily_sales') }}
+
+),
+
+daily_sales AS (
 
     SELECT
         item_id,
@@ -32,28 +48,48 @@ WITH daily_item_sales AS (
 
 ),
 
+item_calendar AS (
+
+    SELECT
+        i.item_id,
+        c.sale_date
+    FROM items AS i
+    CROSS JOIN calendar AS c
+
+),
+
+complete_daily_sales AS (
+
+    SELECT
+        ic.item_id,
+        ic.sale_date,
+        COALESCE(ds.actual_units, 0) AS actual_units
+    FROM item_calendar AS ic
+    LEFT JOIN daily_sales AS ds
+        ON ds.item_id = ic.item_id
+       AND ds.sale_date = ic.sale_date
+
+),
+
 date_bounds AS (
 
     SELECT
         MIN(sale_date) AS min_sale_date,
         MAX(sale_date) AS max_sale_date
-    FROM daily_item_sales
+    FROM complete_daily_sales
 
 ),
 
 forecast_origins AS (
 
     SELECT
-        d.sale_date AS forecast_origin_date
-    FROM (
-        SELECT DISTINCT sale_date
-        FROM daily_item_sales
-    ) AS d
+        c.sale_date AS forecast_origin_date
+    FROM calendar AS c
     CROSS JOIN date_bounds AS b
-    WHERE d.sale_date >= DATEADD(DAY, 28, b.min_sale_date)
-      AND d.sale_date <= DATEADD(DAY, -28, b.max_sale_date)
+    WHERE c.sale_date >= DATEADD(DAY, 28, b.min_sale_date)
+      AND c.sale_date <= DATEADD(DAY, -28, b.max_sale_date)
       AND MOD(
-            DATEDIFF(DAY, b.min_sale_date, d.sale_date),
+            DATEDIFF(DAY, b.min_sale_date, c.sale_date),
             28
           ) = 0
 
@@ -65,13 +101,10 @@ item_origin_baselines AS (
         o.forecast_origin_date,
         i.item_id,
         AVG(h.actual_units) AS baseline_forecast_units,
-        COUNT(h.actual_units) AS history_days
+        COUNT(*) AS history_days
     FROM forecast_origins AS o
-    CROSS JOIN (
-        SELECT DISTINCT item_id
-        FROM daily_item_sales
-    ) AS i
-    JOIN daily_item_sales AS h
+    CROSS JOIN items AS i
+    JOIN complete_daily_sales AS h
         ON h.item_id = i.item_id
        AND h.sale_date >= DATEADD(DAY, -28, o.forecast_origin_date)
        AND h.sale_date < o.forecast_origin_date
@@ -95,7 +128,7 @@ backtest_observations AS (
         a.actual_units,
         b.baseline_forecast_units
     FROM item_origin_baselines AS b
-    JOIN daily_item_sales AS a
+    JOIN complete_daily_sales AS a
         ON a.item_id = b.item_id
        AND a.sale_date > b.forecast_origin_date
        AND a.sale_date <= DATEADD(DAY, 28, b.forecast_origin_date)
