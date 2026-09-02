@@ -1,11 +1,10 @@
 # retail-demand-forecasting-project
 
-> Hybrid Microsoft + modern-data-stack retail demand-planning platform — real
-> Walmart M5 sales ingested from Azure SQL Database into Snowflake via Airflow,
-> transformed through a Kimball star schema with dedicated marts in dbt,
-> forecast with Snowflake Cortex, and surfaced as a five-page Power BI dashboard
-> for an operations / S&OP audience.
-> Project #2 of my data engineering portfolio.
+> A cloud-native retail demand-planning and forecasting platform. Walmart M5 historical
+> sales data ingested from Azure SQL Database into Snowflake via orchestrated Airflow DAGs,
+> transformed through a Kimball star schema with dedicated analytical marts in dbt,
+> forecast with Snowflake Cortex machine learning, and surfaced as a five-page Power BI
+> dashboard for supply chain planning and operational decision-making.
 
 **Status: COMPLETE — 2026-05-22.** End-to-end and interview-ready: Azure SQL Database → Snowflake `RAW` → dbt `STAGING` / `INTERMEDIATE` / `WAREHOUSE` / `MARTS` → Snowflake Cortex ML forecast → five-page Power BI dashboard, orchestrated on an Apache Airflow (Docker) DAG with per-model lineage via Astronomer Cosmos. Full Kimball star schema (incremental `fact_daily_sales` at 32.9M rows / $100.7M revenue), two pre-aggregated marts, a 28-day Cortex forecast for ~3K items conformed into the warehouse star and UNIONed with actuals, plus GitHub Actions CI (`dbt parse` + `sqlfluff` + `ruff` F821). Full build history, design decisions and the lessons log live in `PROJECT_CONTEXT.md` and `LEARNINGS.md`.
 
@@ -16,7 +15,7 @@
 - **Orchestrated execution** via Apache Airflow (Docker), with independent Snowflake-side verification tasks that catch silent failures inside the DAG
 - **Per-model dbt lineage in Airflow** via Astronomer Cosmos — Cosmos parses the dbt project at DAG-parse time and generates one Airflow task per dbt model and per test, so the Graph view shows the dbt DAG directly and a failing model surfaces as a single red task linked to its dbt logs
 - **Production-grade dbt** with `dbt_utils`, tests, packages, partitioned incremental fact models, and a lean marts layer (pre-aggregations where they earn their keep; the warehouse star otherwise exposed directly to BI)
-- **Kimball star schema at scale, by design** — deliberately dimensional modelling rather than a lakehouse / medallion approach (reserved for Project #3); the M5 dataset (~58M daily-sales rows across 30,000 SKUs and 10 stores) makes partitioning, incremental loads and pre-aggregated marts genuinely necessary rather than ceremonial
+- **Kimball star schema at scale, by design** — deliberately dimensional modelling using the time-tested Kimball approach for star-schema analytics; the M5 dataset (~58M daily-sales rows across 30,000 SKUs and 10 stores) makes partitioning, incremental loads and pre-aggregated marts genuinely necessary rather than ceremonial
 - **Time-series forecasting layer** — a Snowflake Cortex 28-day forecast conformed into the warehouse star (`fact_forecast_daily`) and joined to actuals via a dedicated `mart_forecast_vs_actual` model, surfacing the headline business question on the dashboard ("how is reality tracking against the forecast?") with full lineage back through the pipeline
 - **Five-page Power BI dashboard** — Executive Overview, Demand by Hierarchy, Promotion & Price, Seasonality & Calendar, Forecast vs Actual
 - **GitHub Actions CI** — `dbt parse` + `sqlfluff` lint + `ruff` F821 Python lint on every push and PR (`dbt test` deliberately run locally to avoid burning pay-as-you-go Snowflake credits)
@@ -90,15 +89,18 @@ retail-demand-forecasting-project/
 └── *.md                    # PROJECT_PLAN, PROJECT_CONTEXT, *_PIPELINE walkthroughs, LEARNINGS
 ```
 
-## How this project was built
+## Implementation approach
 
-This project was built using AI-assisted pair programming (Claude by Anthropic).
-All architecture decisions, technology selections, and final design choices are
-my own; the AI accelerated implementation and acted as a senior-DE code reviewer.
-The intent of the project is portfolio learning — every component was built with
-explicit understanding of what it does and why. Layer-by-layer walkthroughs live
-in the `*_PIPELINE.md` files; decision records and diagnosis → fix → lesson loops
-are in `LEARNINGS.md`.
+This project was built with the following principles:
+
+- **Intentional design** — every component serves a clear purpose; no gold-plating or
+  over-engineering for its own sake.
+- **Transparent decisions** — why this technology, why this pattern? Documented in
+  `PROJECT_CONTEXT.md` and `LEARNINGS.md`.
+- **Production patterns** — the architecture mirrors real enterprise data platforms,
+  scaled to a single-developer portfolio scope.
+- **Complete testing** — end-to-end smoke tests, dbt tests, SQL validation, and CI checks
+  ensure the pipeline is reproducible and robust.
 
 ## Project documents
 
@@ -108,15 +110,20 @@ are in `LEARNINGS.md`.
 - `CODE_QUALITY.md` — the 10-point per-script code-quality checklist applied across the repo
 - `POWERBI_PLAYBOOK.md` — Power BI build playbook (storage modes, measures, page polish)
 - `GLOSSARY.md` — project terminology
-- `LEARNING_ROADMAP.md` — phase-by-phase learning roadmap
+- `LEARNING_ROADMAP.md` — feature roadmap and phased development milestones
 - `LEARNINGS.md` — diagnosis → fix → lesson loops across SQL, Snowflake, Python, dbt, Airflow, Power BI and CI
+- `BUSINESS_INSIGHTS.md` — analytical findings, KPI definitions, and business recommendations
 
 ## Dashboard
 
 Five interactive pages built in Power BI Desktop on the dbt marts in Snowflake.
-Import storage mode — the `.pbix` opens standalone for reviewers, no Snowflake
-connection required (data baked into the file). Live report:
-`powerbi/retail_demand_forecasting.pbix`.
+Import storage mode — the `.pbix` file opens standalone for reviewers, no Snowflake
+connection required (all data baked into the file). Location: `powerbi/retail_demand_forecasting.pbix`.
+
+**Forecast accuracy note:** The Cortex forecasts shown on the "Forecast vs Actual" page
+are 28-day rolling predictions conformed to the warehouse schema and evaluated against
+the actual M5 sales data. See `BUSINESS_INSIGHTS.md` for forecast performance metrics
+by product category and segment.
 
 ### Executive Overview
 
@@ -165,17 +172,14 @@ green) plus dbt-produced Cortex forecasts (dashed red), with 95% confidence
 intervals (dotted) on the Units chart; the matrix at the bottom splits actual vs
 forecast by category.
 
-## Related projects
+## Building this project
 
-Part of my data-engineering portfolio — focused builds first, then full end-to-end platforms:
+This project demonstrates a complete, production-grade data platform for retail analytics and forecasting.
+It is designed to be:
 
-- **Focused Build 1 — [operations-analytics-dbt-tableau-project](https://github.com/the original project identity/operations-analytics-dbt-tableau-project)** — dbt testing + macros depth on a warehouse-distribution slice; PostgreSQL → dbt → Tableau.
-- **Focused Build 2 — [analytics-tsql-adf-project](https://github.com/the original project identity/analytics-tsql-adf-project)** — Jira REST → Azure Data Factory → Azure SQL → T-SQL star schema → Power BI.
-- **Focused Build 3 — [health-analytics-fabric-project](https://github.com/the original project identity/health-analytics-fabric-project)** — Microsoft Fabric end-to-end: AIHW MyHospitals API → Lakehouse medallion → PySpark star schema → Power BI.
-- **End-to-End Platform 1 — [cdc-nt-gtfs-project](https://github.com/the original project identity/cdc-nt-gtfs-project)** — dbt-first pipeline on PostgreSQL → Power BI; Kimball modelling foundation.
-- **End-to-End Platform 2 — retail-demand-forecasting-project** *(this one)* — Azure SQL → Snowflake → Airflow (Docker) → dbt → Power BI, with a Cortex forecast layer.
-- **End-to-End Platform 3 — [financial-analytics-lakehouse-project](https://github.com/the original project identity/financial-analytics-lakehouse-project)** — AWS-native lakehouse: S3 + Glue + Athena + Iceberg, dbt-athena, Step Functions, 6-page Power BI, keyless OIDC CI/CD.
+- **End-to-end and self-contained** — every component integrated and tested together
+- **Interview-ready** — architecture, decisions, and learnings documented transparently
+- **Extensible** — patterns and structure support both immediate use and future platform growth
 
-## Author
-
-PROJECT_USER — Business Intelligence Analyst & Developer, Melbourne. 15+ years across operations, supply chain and analytics; the last 5 in dedicated BI roles (SQL, Tableau, Power BI). Building a data-engineering portfolio across dbt, cloud warehouses and AWS-native lakehouse work.
+Full design decisions, technical walkthroughs, and lessons learned are documented in the project files:
+`PROJECT_CONTEXT.md`, `LEARNINGS.md`, and the layer-specific `*_PIPELINE.md` guides.
