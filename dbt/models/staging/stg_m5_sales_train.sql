@@ -1,7 +1,12 @@
--- Staging view for M5 daily sales. One row per item × store × day.
+-- Staging table for M5 daily sales. One row per item × store × day.
 -- Joins to stg_m5_calendar to translate the M5 'd_NNNN' identifier
 -- into a real DATE (sale_date).
 -- Materialises to STAGING.STG_M5_SALES_TRAIN.
+
+{{ config(
+    materialized='table',
+    schema='staging'
+) }}
 
 WITH source AS (
 

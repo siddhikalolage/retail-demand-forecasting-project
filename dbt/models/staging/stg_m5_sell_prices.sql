@@ -1,5 +1,10 @@
--- Staging view for M5 weekly sell prices. One row per store × item × fiscal week.
+-- Staging table for M5 weekly sell prices. One row per store × item × fiscal week.
 -- Materialises to STAGING.STG_M5_SELL_PRICES.
+
+{{ config(
+    materialized='table',
+    schema='staging'
+) }}
 
 SELECT
     store_id,

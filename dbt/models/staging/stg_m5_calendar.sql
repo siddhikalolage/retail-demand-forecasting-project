@@ -1,6 +1,10 @@
--- Staging view for the M5 calendar dimension. One row per date.
--- Materialises to STAGING.STG_M5_CALENDAR via dbt_project.yml defaults
--- and the generate_schema_name macro.
+-- Staging table for the M5 calendar dimension. One row per date.
+-- Materialises to STAGING.STG_M5_CALENDAR.
+
+{{ config(
+    materialized='table',
+    schema='staging'
+) }}
 
 SELECT
     -- raw.date is VARCHAR; cast to DATE so downstream joins work.
