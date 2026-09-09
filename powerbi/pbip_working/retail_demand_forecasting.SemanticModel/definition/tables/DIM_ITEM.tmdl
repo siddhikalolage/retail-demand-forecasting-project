@@ -1,0 +1,46 @@
+table DIM_ITEM
+	lineageTag: 3d13fb1c-ba2a-4a97-87ae-201867ebdd00
+
+	column ITEM_KEY
+		dataType: string
+		lineageTag: 3099e775-cb65-420d-b866-f8d0b1a1e0b4
+		summarizeBy: none
+		sourceColumn: ITEM_KEY
+
+		annotation SummarizationSetBy = Automatic
+
+	column ITEM_ID
+		dataType: string
+		lineageTag: 7e92d16e-e1e7-4bfa-9905-e206d43f0286
+		summarizeBy: none
+		sourceColumn: ITEM_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column DEPT_ID
+		dataType: string
+		lineageTag: 8635d8fc-f455-420b-a01c-13bef95117c2
+		summarizeBy: none
+		sourceColumn: DEPT_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CAT_ID
+		dataType: string
+		lineageTag: 199f3a68-f9fe-496d-87fe-1c13dcf8c87e
+		summarizeBy: none
+		sourceColumn: CAT_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DIM_ITEM = m
+		mode: import
+		source =
+				let
+				  Source = Snowflake.Databases("tq94402.ap-southeast-2.snowflakecomputing.com", "WH_RETAIL", [Role = null, CreateNavigationProperties = null, ConnectionTimeout = null, CommandTimeout = null, Implementation = "2.0"]),
+				  #"Navigation 1" = Source{[Name = "RETAIL_DB", Kind = "Database"]}[Data],
+				  #"Navigation 2" = #"Navigation 1"{[Name = "WAREHOUSE", Kind = "Schema"]}[Data],
+				  #"Navigation 3" = #"Navigation 2"{[Name = "DIM_ITEM", Kind = "Table"]}[Data]
+				in
+				  #"Navigation 3"
+

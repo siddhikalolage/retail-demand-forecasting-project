@@ -1,0 +1,292 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "7a2e419b55b657df4de0",
+    "position":  {
+                     "x":  815,
+                     "y":  425,
+                     "z":  301,
+                     "height":  270,
+                     "width":  440,
+                     "tabOrder":  301
+                 },
+    "visual":  {
+                   "visualType":  "donutChart",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Category":  {
+                                                                     "projections":  [
+                                                                                         {
+                                                                                             "field":  {
+                                                                                                           "Column":  {
+                                                                                                                          "Expression":  {
+                                                                                                                                             "SourceRef":  {
+                                                                                                                                                               "Entity":  "DIM_CALENDAR"
+                                                                                                                                                           }
+                                                                                                                                         },
+                                                                                                                          "Property":  "SNAP Day Type"
+                                                                                                                      }
+                                                                                                       },
+                                                                                             "queryRef":  "DIM_CALENDAR.is_snap_day",
+                                                                                             "nativeQueryRef":  "is_snap_day",
+                                                                                             "active":  true
+                                                                                         }
+                                                                                     ]
+                                                                 },
+                                                    "Y":  {
+                                                              "projections":  [
+                                                                                  {
+                                                                                      "field":  {
+                                                                                                    "Measure":  {
+                                                                                                                    "Expression":  {
+                                                                                                                                       "SourceRef":  {
+                                                                                                                                                         "Entity":  "_Measures"
+                                                                                                                                                     }
+                                                                                                                                   },
+                                                                                                                    "Property":  "Total Revenue"
+                                                                                                                }
+                                                                                                },
+                                                                                      "queryRef":  "_Measures.Total Revenue",
+                                                                                      "nativeQueryRef":  "Total Revenue"
+                                                                                  }
+                                                                              ]
+                                                          }
+                                                },
+                                 "sortDefinition":  {
+                                                        "sort":  [
+                                                                     {
+                                                                         "field":  {
+                                                                                       "Measure":  {
+                                                                                                       "Expression":  {
+                                                                                                                          "SourceRef":  {
+                                                                                                                                            "Entity":  "_Measures"
+                                                                                                                                        }
+                                                                                                                      },
+                                                                                                       "Property":  "Total Revenue"
+                                                                                                   }
+                                                                                   },
+                                                                         "direction":  "Ascending"
+                                                                     }
+                                                                 ]
+                                                    }
+                             },
+                   "objects":  {
+                                   "dataPoint":  [
+                                                     {
+                                                         "properties":  {
+                                                                            "fill":  {
+                                                                                         "solid":  {
+                                                                                                       "color":  {
+                                                                                                                     "expr":  {
+                                                                                                                                  "ThemeDataColor":  {
+                                                                                                                                                         "ColorId":  7,
+                                                                                                                                                         "Percent":  0
+                                                                                                                                                     }
+                                                                                                                              }
+                                                                                                                 }
+                                                                                                   }
+                                                                                     }
+                                                                        },
+                                                         "selector":  {
+                                                                          "data":  [
+                                                                                       {
+                                                                                           "scopeId":  {
+                                                                                                           "Comparison":  {
+                                                                                                                              "ComparisonKind":  0,
+                                                                                                                              "Left":  {
+                                                                                                                                           "Column":  {
+                                                                                                                                                          "Expression":  {
+                                                                                                                                                                             "SourceRef":  {
+                                                                                                                                                                                               "Entity":  "DIM_CALENDAR"
+                                                                                                                                                                                           }
+                                                                                                                                                                         },
+                                                                                                                                                          "Property":  "SNAP Day Type"
+                                                                                                                                                      }
+                                                                                                                                       },
+                                                                                                                              "Right":  {
+                                                                                                                                            "Literal":  {
+                                                                                                                                                            "Value":  "false"
+                                                                                                                                                        }
+                                                                                                                                        }
+                                                                                                                          }
+                                                                                                       }
+                                                                                       }
+                                                                                   ]
+                                                                      }
+                                                     },
+                                                     {
+                                                         "properties":  {
+                                                                            "fill":  {
+                                                                                         "solid":  {
+                                                                                                       "color":  {
+                                                                                                                     "expr":  {
+                                                                                                                                  "ThemeDataColor":  {
+                                                                                                                                                         "ColorId":  6,
+                                                                                                                                                         "Percent":  0
+                                                                                                                                                     }
+                                                                                                                              }
+                                                                                                                 }
+                                                                                                   }
+                                                                                     }
+                                                                        },
+                                                         "selector":  {
+                                                                          "data":  [
+                                                                                       {
+                                                                                           "scopeId":  {
+                                                                                                           "Comparison":  {
+                                                                                                                              "ComparisonKind":  0,
+                                                                                                                              "Left":  {
+                                                                                                                                           "Column":  {
+                                                                                                                                                          "Expression":  {
+                                                                                                                                                                             "SourceRef":  {
+                                                                                                                                                                                               "Entity":  "DIM_CALENDAR"
+                                                                                                                                                                                           }
+                                                                                                                                                                         },
+                                                                                                                                                          "Property":  "SNAP Day Type"
+                                                                                                                                                      }
+                                                                                                                                       },
+                                                                                                                              "Right":  {
+                                                                                                                                            "Literal":  {
+                                                                                                                                                            "Value":  "true"
+                                                                                                                                                        }
+                                                                                                                                        }
+                                                                                                                          }
+                                                                                                       }
+                                                                                       }
+                                                                                   ]
+                                                                      }
+                                                     },
+                                                     {
+                                                         "properties":  {
+                                                                            "fill":  {
+                                                                                         "solid":  {
+                                                                                                       "color":  {
+                                                                                                                     "expr":  {
+                                                                                                                                  "ThemeDataColor":  {
+                                                                                                                                                         "ColorId":  5,
+                                                                                                                                                         "Percent":  0
+                                                                                                                                                     }
+                                                                                                                              }
+                                                                                                                 }
+                                                                                                   }
+                                                                                     }
+                                                                        },
+                                                         "selector":  {
+                                                                          "data":  [
+                                                                                       {
+                                                                                           "scopeId":  {
+                                                                                                           "Comparison":  {
+                                                                                                                              "ComparisonKind":  0,
+                                                                                                                              "Left":  {
+                                                                                                                                           "Column":  {
+                                                                                                                                                          "Expression":  {
+                                                                                                                                                                             "SourceRef":  {
+                                                                                                                                                                                               "Entity":  "DIM_CALENDAR"
+                                                                                                                                                                                           }
+                                                                                                                                                                         },
+                                                                                                                                                          "Property":  "SNAP Day Type"
+                                                                                                                                                      }
+                                                                                                                                       },
+                                                                                                                              "Right":  {
+                                                                                                                                            "Literal":  {
+                                                                                                                                                            "Value":  "\u0027SNAP Day\u0027"
+                                                                                                                                                        }
+                                                                                                                                        }
+                                                                                                                          }
+                                                                                                       }
+                                                                                       }
+                                                                                   ]
+                                                                      }
+                                                     },
+                                                     {
+                                                         "properties":  {
+                                                                            "fill":  {
+                                                                                         "solid":  {
+                                                                                                       "color":  {
+                                                                                                                     "expr":  {
+                                                                                                                                  "ThemeDataColor":  {
+                                                                                                                                                         "ColorId":  0,
+                                                                                                                                                         "Percent":  -0.3
+                                                                                                                                                     }
+                                                                                                                              }
+                                                                                                                 }
+                                                                                                   }
+                                                                                     }
+                                                                        },
+                                                         "selector":  {
+                                                                          "data":  [
+                                                                                       {
+                                                                                           "scopeId":  {
+                                                                                                           "Comparison":  {
+                                                                                                                              "ComparisonKind":  0,
+                                                                                                                              "Left":  {
+                                                                                                                                           "Column":  {
+                                                                                                                                                          "Expression":  {
+                                                                                                                                                                             "SourceRef":  {
+                                                                                                                                                                                               "Entity":  "DIM_CALENDAR"
+                                                                                                                                                                                           }
+                                                                                                                                                                         },
+                                                                                                                                                          "Property":  "SNAP Day Type"
+                                                                                                                                                      }
+                                                                                                                                       },
+                                                                                                                              "Right":  {
+                                                                                                                                            "Literal":  {
+                                                                                                                                                            "Value":  "\u0027Non-SNAP Day\u0027"
+                                                                                                                                                        }
+                                                                                                                                        }
+                                                                                                                          }
+                                                                                                       }
+                                                                                       }
+                                                                                   ]
+                                                                      }
+                                                     }
+                                                 ],
+                                   "labels":  [
+                                                  {
+                                                      "properties":  {
+                                                                         "labelStyle":  {
+                                                                                            "expr":  {
+                                                                                                         "Literal":  {
+                                                                                                                         "Value":  "\u0027Category, percent of total\u0027"
+                                                                                                                     }
+                                                                                                     }
+                                                                                        }
+                                                                     }
+                                                  }
+                                              ]
+                               },
+                   "visualContainerObjects":  {
+                                                  "title":  [
+                                                                {
+                                                                    "properties":  {
+                                                                                       "text":  {
+                                                                                                    "expr":  {
+                                                                                                                 "Literal":  {
+                                                                                                                                 "Value":  "\u0027Promotion Mix (Supporting View)\u0027"
+                                                                                                                             }
+                                                                                                             }
+                                                                                                },
+                                                                                       "fontColor":  {
+                                                                                                         "solid":  {
+                                                                                                                       "color":  {
+                                                                                                                                     "expr":  {
+                                                                                                                                                  "Literal":  {
+                                                                                                                                                                  "Value":  "\u0027#172033\u0027"
+                                                                                                                                                              }
+                                                                                                                                              }
+                                                                                                                                 }
+                                                                                                                   }
+                                                                                                     },
+                                                                                       "fontSize":  {
+                                                                                                        "expr":  {
+                                                                                                                     "Literal":  {
+                                                                                                                                     "Value":  "13D"
+                                                                                                                                 }
+                                                                                                                 }
+                                                                                                    }
+                                                                                   }
+                                                                }
+                                                            ]
+                                              },
+                   "drillFilterOtherVisuals":  true
+               }
+}

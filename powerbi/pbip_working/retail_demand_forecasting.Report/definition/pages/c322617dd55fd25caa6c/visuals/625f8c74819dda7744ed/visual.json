@@ -1,0 +1,209 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "625f8c74819dda7744ed",
+    "position":  {
+                     "x":  815,
+                     "y":  160,
+                     "z":  300,
+                     "height":  245,
+                     "width":  440,
+                     "tabOrder":  300
+                 },
+    "visual":  {
+                   "visualType":  "clusteredColumnChart",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Category":  {
+                                                                     "projections":  [
+                                                                                         {
+                                                                                             "field":  {
+                                                                                                           "Column":  {
+                                                                                                                          "Expression":  {
+                                                                                                                                             "SourceRef":  {
+                                                                                                                                                               "Entity":  "DIM_ITEM"
+                                                                                                                                                           }
+                                                                                                                                         },
+                                                                                                                          "Property":  "CAT_ID"
+                                                                                                                      }
+                                                                                                       },
+                                                                                             "queryRef":  "DIM_ITEM.CAT_ID",
+                                                                                             "nativeQueryRef":  "CAT_ID",
+                                                                                             "active":  true
+                                                                                         }
+                                                                                     ]
+                                                                 },
+                                                    "Y":  {
+                                                              "projections":  [
+                                                                                  {
+                                                                                      "field":  {
+                                                                                                    "Measure":  {
+                                                                                                                    "Expression":  {
+                                                                                                                                       "SourceRef":  {
+                                                                                                                                                         "Entity":  "_Measures"
+                                                                                                                                                     }
+                                                                                                                                   },
+                                                                                                                    "Property":  "Avg Selling Price"
+                                                                                                                }
+                                                                                                },
+                                                                                      "queryRef":  "_Measures.Avg Selling Price",
+                                                                                      "nativeQueryRef":  "Avg Selling Price"
+                                                                                  }
+                                                                              ]
+                                                          }
+                                                },
+                                 "sortDefinition":  {
+                                                        "sort":  [
+                                                                     {
+                                                                         "field":  {
+                                                                                       "Measure":  {
+                                                                                                       "Expression":  {
+                                                                                                                          "SourceRef":  {
+                                                                                                                                            "Entity":  "_Measures"
+                                                                                                                                        }
+                                                                                                                      },
+                                                                                                       "Property":  "Avg Selling Price"
+                                                                                                   }
+                                                                                   },
+                                                                         "direction":  "Descending"
+                                                                     }
+                                                                 ],
+                                                        "isDefaultSort":  true
+                                                    }
+                             },
+                   "objects":  {
+                                   "dataPoint":  [
+                                                     {
+                                                         "properties":  {
+                                                                            "fill":  {
+                                                                                         "solid":  {
+                                                                                                       "color":  {
+                                                                                                                     "expr":  {
+                                                                                                                                  "ThemeDataColor":  {
+                                                                                                                                                         "ColorId":  3,
+                                                                                                                                                         "Percent":  0
+                                                                                                                                                     }
+                                                                                                                              }
+                                                                                                                 }
+                                                                                                   }
+                                                                                     }
+                                                                        },
+                                                         "selector":  {
+                                                                          "data":  [
+                                                                                       {
+                                                                                           "scopeId":  {
+                                                                                                           "Comparison":  {
+                                                                                                                              "ComparisonKind":  0,
+                                                                                                                              "Left":  {
+                                                                                                                                           "Column":  {
+                                                                                                                                                          "Expression":  {
+                                                                                                                                                                             "SourceRef":  {
+                                                                                                                                                                                               "Entity":  "DIM_ITEM"
+                                                                                                                                                                                           }
+                                                                                                                                                                         },
+                                                                                                                                                          "Property":  "CAT_ID"
+                                                                                                                                                      }
+                                                                                                                                       },
+                                                                                                                              "Right":  {
+                                                                                                                                            "Literal":  {
+                                                                                                                                                            "Value":  "\u0027FOODS\u0027"
+                                                                                                                                                        }
+                                                                                                                                        }
+                                                                                                                          }
+                                                                                                       }
+                                                                                       }
+                                                                                   ]
+                                                                      }
+                                                     },
+                                                     {
+                                                         "properties":  {
+                                                                            "fill":  {
+                                                                                         "solid":  {
+                                                                                                       "color":  {
+                                                                                                                     "expr":  {
+                                                                                                                                  "ThemeDataColor":  {
+                                                                                                                                                         "ColorId":  7,
+                                                                                                                                                         "Percent":  0
+                                                                                                                                                     }
+                                                                                                                              }
+                                                                                                                 }
+                                                                                                   }
+                                                                                     }
+                                                                        },
+                                                         "selector":  {
+                                                                          "data":  [
+                                                                                       {
+                                                                                           "scopeId":  {
+                                                                                                           "Comparison":  {
+                                                                                                                              "ComparisonKind":  0,
+                                                                                                                              "Left":  {
+                                                                                                                                           "Column":  {
+                                                                                                                                                          "Expression":  {
+                                                                                                                                                                             "SourceRef":  {
+                                                                                                                                                                                               "Entity":  "DIM_ITEM"
+                                                                                                                                                                                           }
+                                                                                                                                                                         },
+                                                                                                                                                          "Property":  "CAT_ID"
+                                                                                                                                                      }
+                                                                                                                                       },
+                                                                                                                              "Right":  {
+                                                                                                                                            "Literal":  {
+                                                                                                                                                            "Value":  "\u0027HOBBIES\u0027"
+                                                                                                                                                        }
+                                                                                                                                        }
+                                                                                                                          }
+                                                                                                       }
+                                                                                       }
+                                                                                   ]
+                                                                      }
+                                                     }
+                                                 ],
+                                   "valueAxis":  [
+                                                     {
+                                                         "properties":  {
+                                                                            "labelPrecision":  {
+                                                                                                   "expr":  {
+                                                                                                                "Literal":  {
+                                                                                                                                "Value":  "2L"
+                                                                                                                            }
+                                                                                                            }
+                                                                                               }
+                                                                        }
+                                                     }
+                                                 ]
+                               },
+                   "visualContainerObjects":  {
+                                                  "title":  [
+                                                                {
+                                                                    "properties":  {
+                                                                                       "text":  {
+                                                                                                    "expr":  {
+                                                                                                                 "Literal":  {
+                                                                                                                                 "Value":  "\u0027Revenue by Promotion Status\u0027"
+                                                                                                                             }
+                                                                                                             }
+                                                                                                },
+                                                                                       "fontSize":  {
+                                                                                                        "expr":  {
+                                                                                                                     "Literal":  {
+                                                                                                                                     "Value":  "13D"
+                                                                                                                                 }
+                                                                                                                 }
+                                                                                                    },
+                                                                                       "fontColor":  {
+                                                                                                         "solid":  {
+                                                                                                                       "color":  {
+                                                                                                                                     "expr":  {
+                                                                                                                                                  "Literal":  {
+                                                                                                                                                                  "Value":  "\u0027#172033\u0027"
+                                                                                                                                                              }
+                                                                                                                                              }
+                                                                                                                                 }
+                                                                                                                   }
+                                                                                                     }
+                                                                                   }
+                                                                }
+                                                            ]
+                                              },
+                   "drillFilterOtherVisuals":  true
+               }
+}

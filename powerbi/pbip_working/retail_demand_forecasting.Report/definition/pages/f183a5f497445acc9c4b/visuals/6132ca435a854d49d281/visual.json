@@ -1,0 +1,276 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "6132ca435a854d49d281",
+    "position":  {
+                     "x":  645,
+                     "y":  540,
+                     "z":  501,
+                     "height":  155,
+                     "width":  610,
+                     "tabOrder":  501
+                 },
+    "visual":  {
+                   "visualType":  "pivotTable",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Columns":  {
+                                                                    "projections":  [
+                                                                                        {
+                                                                                            "field":  {
+                                                                                                          "Column":  {
+                                                                                                                         "Expression":  {
+                                                                                                                                            "SourceRef":  {
+                                                                                                                                                              "Entity":  "MART_FORECAST_VS_ACTUAL"
+                                                                                                                                                          }
+                                                                                                                                        },
+                                                                                                                         "Property":  "SERIES_TYPE"
+                                                                                                                     }
+                                                                                                      },
+                                                                                            "queryRef":  "MART_FORECAST_VS_ACTUAL.SERIES_TYPE",
+                                                                                            "nativeQueryRef":  "SERIES_TYPE",
+                                                                                            "active":  true
+                                                                                        }
+                                                                                    ]
+                                                                },
+                                                    "Rows":  {
+                                                                 "projections":  [
+                                                                                     {
+                                                                                         "field":  {
+                                                                                                       "Column":  {
+                                                                                                                      "Expression":  {
+                                                                                                                                         "SourceRef":  {
+                                                                                                                                                           "Entity":  "DIM_ITEM"
+                                                                                                                                                       }
+                                                                                                                                     },
+                                                                                                                      "Property":  "CAT_ID"
+                                                                                                                  }
+                                                                                                   },
+                                                                                         "queryRef":  "DIM_ITEM.CAT_ID",
+                                                                                         "nativeQueryRef":  "CAT_ID",
+                                                                                         "active":  true
+                                                                                     }
+                                                                                 ]
+                                                             },
+                                                    "Values":  {
+                                                                   "projections":  [
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Measure":  {
+                                                                                                                         "Expression":  {
+                                                                                                                                            "SourceRef":  {
+                                                                                                                                                              "Entity":  "_Measures"
+                                                                                                                                                          }
+                                                                                                                                        },
+                                                                                                                         "Property":  "Total Units (Mart)"
+                                                                                                                     }
+                                                                                                     },
+                                                                                           "queryRef":  "_Measures.Total Units (Mart)",
+                                                                                           "nativeQueryRef":  "Units",
+                                                                                           "displayName":  "Units"
+                                                                                       },
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Measure":  {
+                                                                                                                         "Expression":  {
+                                                                                                                                            "SourceRef":  {
+                                                                                                                                                              "Entity":  "_Measures"
+                                                                                                                                                          }
+                                                                                                                                        },
+                                                                                                                         "Property":  "Total Revenue (Mart)"
+                                                                                                                     }
+                                                                                                     },
+                                                                                           "queryRef":  "_Measures.Total Revenue (Mart)",
+                                                                                           "nativeQueryRef":  "Revenue",
+                                                                                           "displayName":  "Revenue"
+                                                                                       }
+                                                                                   ]
+                                                               }
+                                                },
+                                 "sortDefinition":  {
+                                                        "sort":  [
+                                                                     {
+                                                                         "field":  {
+                                                                                       "Measure":  {
+                                                                                                       "Expression":  {
+                                                                                                                          "SourceRef":  {
+                                                                                                                                            "Entity":  "_Measures"
+                                                                                                                                        }
+                                                                                                                      },
+                                                                                                       "Property":  "Total Revenue (Mart)"
+                                                                                                   }
+                                                                                   },
+                                                                         "direction":  "Descending"
+                                                                     }
+                                                                 ]
+                                                    }
+                             },
+                   "objects":  {
+                                   "columnHeaders":  [
+                                                         {
+                                                             "properties":  {
+                                                                                "columnAdjustment":  {
+                                                                                                         "expr":  {
+                                                                                                                      "Literal":  {
+                                                                                                                                      "Value":  "\u0027growToFit\u0027"
+                                                                                                                                  }
+                                                                                                                  }
+                                                                                                     }
+                                                                            }
+                                                         }
+                                                     ],
+                                   "columnWidth":  [
+                                                       {
+                                                           "properties":  {
+                                                                              "value":  {
+                                                                                            "expr":  {
+                                                                                                         "Literal":  {
+                                                                                                                         "Value":  "90D"
+                                                                                                                     }
+                                                                                                     }
+                                                                                        }
+                                                                          },
+                                                           "selector":  {
+                                                                            "metadata":  "DIM_ITEM.CAT_ID"
+                                                                        }
+                                                       }
+                                                   ],
+                                   "values":  [
+                                                  {
+                                                      "properties":  {
+                                                                         "bandedRowHeaders":  {
+                                                                                                  "expr":  {
+                                                                                                               "Literal":  {
+                                                                                                                               "Value":  "true"
+                                                                                                                           }
+                                                                                                           }
+                                                                                              },
+                                                                         "backColorSecondary":  {
+                                                                                                    "solid":  {
+                                                                                                                  "color":  {
+                                                                                                                                "expr":  {
+                                                                                                                                             "ThemeDataColor":  {
+                                                                                                                                                                    "ColorId":  0,
+                                                                                                                                                                    "Percent":  0
+                                                                                                                                                                }
+                                                                                                                                         }
+                                                                                                                            }
+                                                                                                              }
+                                                                                                }
+                                                                     }
+                                                  }
+                                              ],
+                                   "rowHeaders":  [
+                                                      {
+                                                          "properties":  {
+                                                                             "fontSize":  {
+                                                                                              "expr":  {
+                                                                                                           "Literal":  {
+                                                                                                                           "Value":  "8D"
+                                                                                                                       }
+                                                                                                       }
+                                                                                          }
+                                                                         }
+                                                      }
+                                                  ],
+                                   "grid":  [
+                                                {
+                                                    "properties":  {
+                                                                       "gridVertical":  {
+                                                                                            "expr":  {
+                                                                                                         "Literal":  {
+                                                                                                                         "Value":  "true"
+                                                                                                                     }
+                                                                                                     }
+                                                                                        },
+                                                                       "gridVerticalWeight":  {
+                                                                                                  "expr":  {
+                                                                                                               "Literal":  {
+                                                                                                                               "Value":  "10D"
+                                                                                                                           }
+                                                                                                           }
+                                                                                              },
+                                                                       "gridHorizontal":  {
+                                                                                              "expr":  {
+                                                                                                           "Literal":  {
+                                                                                                                           "Value":  "true"
+                                                                                                                       }
+                                                                                                       }
+                                                                                          },
+                                                                       "gridHorizontalWeight":  {
+                                                                                                    "expr":  {
+                                                                                                                 "Literal":  {
+                                                                                                                                 "Value":  "7D"
+                                                                                                                             }
+                                                                                                             }
+                                                                                                },
+                                                                       "gridHorizontalColor":  {
+                                                                                                   "solid":  {
+                                                                                                                 "color":  {
+                                                                                                                               "expr":  {
+                                                                                                                                            "ThemeDataColor":  {
+                                                                                                                                                                   "ColorId":  0,
+                                                                                                                                                                   "Percent":  0
+                                                                                                                                                               }
+                                                                                                                                        }
+                                                                                                                           }
+                                                                                                             }
+                                                                                               },
+                                                                       "gridVerticalColor":  {
+                                                                                                 "solid":  {
+                                                                                                               "color":  {
+                                                                                                                             "expr":  {
+                                                                                                                                          "ThemeDataColor":  {
+                                                                                                                                                                 "ColorId":  0,
+                                                                                                                                                                 "Percent":  0
+                                                                                                                                                             }
+                                                                                                                                      }
+                                                                                                                         }
+                                                                                                           }
+                                                                                             }
+                                                                   }
+                                                }
+                                            ]
+                               },
+                   "visualContainerObjects":  {
+                                                  "title":  [
+                                                                {
+                                                                    "properties":  {
+                                                                                       "show":  {
+                                                                                                    "expr":  {
+                                                                                                                 "Literal":  {
+                                                                                                                                 "Value":  "true"
+                                                                                                                             }
+                                                                                                             }
+                                                                                                },
+                                                                                       "text":  {
+                                                                                                    "expr":  {
+                                                                                                                 "Literal":  {
+                                                                                                                                 "Value":  "\u0027Forecast Detail\u0027"
+                                                                                                                             }
+                                                                                                             }
+                                                                                                },
+                                                                                       "fontSize":  {
+                                                                                                        "expr":  {
+                                                                                                                     "Literal":  {
+                                                                                                                                     "Value":  "13D"
+                                                                                                                                 }
+                                                                                                                 }
+                                                                                                    },
+                                                                                       "fontColor":  {
+                                                                                                         "solid":  {
+                                                                                                                       "color":  {
+                                                                                                                                     "expr":  {
+                                                                                                                                                  "Literal":  {
+                                                                                                                                                                  "Value":  "\u0027#172033\u0027"
+                                                                                                                                                              }
+                                                                                                                                              }
+                                                                                                                                 }
+                                                                                                                   }
+                                                                                                     }
+                                                                                   }
+                                                                }
+                                                            ]
+                                              },
+                   "drillFilterOtherVisuals":  true
+               }
+}

@@ -1,0 +1,28 @@
+relationship eafd45dc-43ba-d9be-0e20-4e676dbd3704
+	fromColumn: FACT_DAILY_SALES.ITEM_KEY
+	toColumn: DIM_ITEM.ITEM_KEY
+
+relationship 082801c1-6a99-b3c9-105b-e77209f85e40
+	fromColumn: FACT_DAILY_SALES.STORE_KEY
+	toColumn: DIM_STORE.STORE_KEY
+
+relationship fdd43293-adc6-9a4c-d219-7555d05c8594
+	fromColumn: FACT_DAILY_SALES.DATE_KEY
+	toColumn: DIM_CALENDAR.DATE_KEY
+
+relationship 380104b1-2d76-f15e-bb49-8c4498dcbca7
+	fromColumn: FACT_FORECAST_DAILY.ITEM_KEY
+	toColumn: DIM_ITEM.ITEM_KEY
+
+relationship 2df2e57d-e7c7-ffa1-7cab-90959057ea71
+	fromColumn: FACT_FORECAST_DAILY.DATE_KEY
+	toColumn: DIM_CALENDAR.DATE_KEY
+
+relationship 910a1abf-c4e6-4b31-61c2-d2dded0e1304
+	fromColumn: MART_FORECAST_VS_ACTUAL.ITEM_KEY
+	toColumn: DIM_ITEM.ITEM_KEY
+
+relationship 98ddf15a-b6e2-5cf1-c513-c0fe81a0812b
+	fromColumn: MART_FORECAST_VS_ACTUAL.DATE_KEY
+	toColumn: DIM_CALENDAR.DATE_KEY
+

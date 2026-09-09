@@ -1,0 +1,226 @@
+table DIM_CALENDAR
+	lineageTag: 87a263c3-a497-4971-9e0c-48c74f3e7ed6
+	dataCategory: Time
+
+	column DATE_KEY
+		dataType: string
+		lineageTag: 9d01195d-e66f-4d45-967b-4f82e3bdd2f2
+		summarizeBy: none
+		sourceColumn: DATE_KEY
+
+		annotation SummarizationSetBy = Automatic
+
+	column CALENDAR_DATE
+		dataType: dateTime
+		isKey
+		formatString: Long Date
+		lineageTag: 47e91b5b-1e75-4e8b-9d7f-16cc70e456e3
+		summarizeBy: none
+		sourceColumn: CALENDAR_DATE
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column D
+		dataType: string
+		lineageTag: 94333f81-41b9-4f7e-9672-58bb8c9ccd43
+		summarizeBy: none
+		sourceColumn: D
+
+		annotation SummarizationSetBy = Automatic
+
+	column YEAR
+		dataType: int64
+		lineageTag: 5af70368-e4a6-45d5-aff2-fdb436e7fadf
+		summarizeBy: sum
+		sourceColumn: YEAR
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column QUARTER
+		dataType: double
+		lineageTag: 3f59e1ba-233b-4d42-88a3-64e14c1c8383
+		summarizeBy: sum
+		sourceColumn: QUARTER
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column MONTH
+		dataType: double
+		lineageTag: 88a418e9-5757-4816-bd59-34efc89f0dbc
+		summarizeBy: sum
+		sourceColumn: MONTH
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column MONTH_NAME
+		dataType: string
+		lineageTag: 84900b27-09d0-4ddc-b801-711e4ea50624
+		summarizeBy: none
+		sourceColumn: MONTH_NAME
+		sortByColumn: MONTH
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column DAY_OF_MONTH
+		dataType: double
+		lineageTag: 530257f3-6b6f-4ece-a6ec-cf892f0d348e
+		summarizeBy: sum
+		sourceColumn: DAY_OF_MONTH
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DAY_OF_WEEK
+		dataType: double
+		lineageTag: 4b9642a6-42ba-4fe8-96a5-53833c1f7221
+		summarizeBy: sum
+		sourceColumn: DAY_OF_WEEK
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DAY_NAME
+		dataType: string
+		lineageTag: 1bfdbbd9-82eb-4d82-84cf-5f52890a190c
+		summarizeBy: none
+		sourceColumn: DAY_NAME
+
+		annotation SummarizationSetBy = Automatic
+
+	column WEEK_OF_YEAR
+		dataType: double
+		lineageTag: e6e0b71e-9169-445d-9768-4f3d9503a865
+		summarizeBy: sum
+		sourceColumn: WEEK_OF_YEAR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column IS_WEEKEND
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 2875ea45-4ea8-482f-8892-5de54ca9fe6a
+		summarizeBy: none
+		sourceColumn: IS_WEEKEND
+
+		annotation SummarizationSetBy = Automatic
+
+	column WM_YR_WK
+		dataType: double
+		lineageTag: 7ad3110f-7f8d-4633-997b-5d3e54c971ed
+		summarizeBy: sum
+		sourceColumn: WM_YR_WK
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column EVENT_NAME_1
+		dataType: string
+		lineageTag: e57b2fe4-9031-4461-bb9a-065e6d405679
+		summarizeBy: none
+		sourceColumn: EVENT_NAME_1
+
+		annotation SummarizationSetBy = Automatic
+
+	column EVENT_TYPE_1
+		dataType: string
+		lineageTag: f2d79e4d-6a24-4ab7-9a78-6c8c560c70c6
+		summarizeBy: none
+		sourceColumn: EVENT_TYPE_1
+
+		annotation SummarizationSetBy = Automatic
+
+	column EVENT_NAME_2
+		dataType: string
+		lineageTag: 9e36d917-f5c1-4e26-8004-5f3387489e9d
+		summarizeBy: none
+		sourceColumn: EVENT_NAME_2
+
+		annotation SummarizationSetBy = Automatic
+
+	column EVENT_TYPE_2
+		dataType: string
+		lineageTag: ebeddd8a-b982-46a9-baf5-597de6f82c4a
+		summarizeBy: none
+		sourceColumn: EVENT_TYPE_2
+
+		annotation SummarizationSetBy = Automatic
+
+	column IS_HOLIDAY
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: da4d56c3-0859-4b32-a58f-eef345fcf4ed
+		summarizeBy: none
+		sourceColumn: IS_HOLIDAY
+
+		annotation SummarizationSetBy = Automatic
+
+	column SNAP_CA
+		dataType: double
+		lineageTag: 97f33827-72a9-4c4f-9eab-f2aefd62a9e5
+		summarizeBy: sum
+		sourceColumn: SNAP_CA
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SNAP_TX
+		dataType: double
+		lineageTag: f7fb33e1-3680-4cf4-944f-405a3a748ce0
+		summarizeBy: sum
+		sourceColumn: SNAP_TX
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SNAP_WI
+		dataType: double
+		lineageTag: b937ef22-5223-4f02-8db2-1d423fcd57f1
+		summarizeBy: sum
+		sourceColumn: SNAP_WI
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'SNAP Day Type' = IF ( DIM_CALENDAR[SNAP_CA] = 1 || DIM_CALENDAR[SNAP_TX] = 1 || DIM_CALENDAR[SNAP_WI] = 1, "SNAP Day", "Non-SNAP Day" )
+		lineageTag: a8dde136-54b4-44ee-be7c-a6983e574634
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Day Type' = IF(DIM_CALENDAR[IS_WEEKEND], "Weekend", "Weekday")
+		lineageTag: 7900cffc-cd73-4b69-8b39-7d137c10852a
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DIM_CALENDAR = m
+		mode: import
+		source =
+				let
+				  Source = Snowflake.Databases("tq94402.ap-southeast-2.snowflakecomputing.com", "WH_RETAIL", [Role = null, CreateNavigationProperties = null, ConnectionTimeout = null, CommandTimeout = null, Implementation = "2.0"]),
+				  #"Navigation 1" = Source{[Name = "RETAIL_DB", Kind = "Database"]}[Data],
+				  #"Navigation 2" = #"Navigation 1"{[Name = "WAREHOUSE", Kind = "Schema"]}[Data],
+				  #"Navigation 3" = #"Navigation 2"{[Name = "DIM_CALENDAR", Kind = "Table"]}[Data]
+				in
+				  #"Navigation 3"
+

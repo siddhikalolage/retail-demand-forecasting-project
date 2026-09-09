@@ -1,0 +1,99 @@
+table _Measures
+	lineageTag: 074cfd3c-1240-4a9a-9dd1-8893ee56e317
+
+	measure 'Total Revenue' = SUM(FACT_DAILY_SALES[revenue_amount_usd])
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 1d69c578-f11d-4a9f-94fa-db1e6d324e20
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Total Units Sold' = SUM(FACT_DAILY_SALES[units_sold])
+		formatString: #,0
+		lineageTag: 151de798-4ab9-47a7-90d7-90bd758b9b34
+
+	measure 'Active Stores' = DISTINCTCOUNT(FACT_DAILY_SALES[store_key])
+		formatString: 0
+		lineageTag: fec35c05-e4fb-4799-ae5c-02242db51ac1
+
+	measure 'Active Items' = DISTINCTCOUNT(FACT_DAILY_SALES[item_key])
+		formatString: 0
+		lineageTag: a83802b9-a3b8-4d1c-bec7-3bd1166472c1
+
+	measure 'Revenue Share %' = DIVIDE([Total Revenue], CALCULATE([Total Revenue], ALL(DIM_ITEM)))
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 53c2ea9f-8815-4f31-85a7-334b04b8d303
+
+	measure 'Avg Selling Price' = AVERAGEX(FILTER(FACT_DAILY_SALES, FACT_DAILY_SALES[sell_price] > 0), FACT_DAILY_SALES[sell_price])
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: cefa3cb8-7014-4a10-8206-19bad7c80ed7
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Holiday Revenue' = CALCULATE([Total Revenue], DIM_CALENDAR[is_holiday] = TRUE)
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: ed7046b9-bc9e-4cee-944c-15aa2820dd8f
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Actual Units' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[units]), MART_FORECAST_VS_ACTUAL[series_type] = "actual")
+		lineageTag: 63fc3e36-243d-4608-aacf-e9e81b5995c1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Forecast Units' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[units]), MART_FORECAST_VS_ACTUAL[series_type] = "forecast")
+		lineageTag: 9eac4fa3-6b80-43c5-837b-2884f82ab1f6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Forecast Upper 95' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[units_upper_95]), MART_FORECAST_VS_ACTUAL[series_type] = "forecast")
+		lineageTag: e225901a-d6bc-4632-9bc0-bbccad7bb14c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Forecast Lower 95' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[units_lower_95]), MART_FORECAST_VS_ACTUAL[series_type] = "forecast")
+		lineageTag: 603d6823-835b-4d9d-8ad2-7b497636a926
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue 30-Day MA' = AVERAGEX(DATESINPERIOD(DIM_CALENDAR[calendar_date], MAX(DIM_CALENDAR[calendar_date]), -30, DAY), [Total Revenue])
+		lineageTag: 7f6feb31-3104-4338-85cc-066fee3a3645
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Actual Revenue' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[revenue_usd]), MART_FORECAST_VS_ACTUAL[series_type] = "actual")
+		lineageTag: a9141906-b6f0-4638-8f35-6733635c9fcf
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Forecast Revenue' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[revenue_usd]), MART_FORECAST_VS_ACTUAL[series_type] = "forecast")
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: ba8ede7f-04e0-4d67-b2b8-dbae69938c92
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Total Units (Mart)' = SUM ( MART_FORECAST_VS_ACTUAL[UNITS] )
+		formatString: #,0
+		lineageTag: df7668e0-eda4-4fbc-89bf-53be7bfca197
+
+	measure 'Total Revenue (Mart)' = SUM ( MART_FORECAST_VS_ACTUAL[REVENUE_USD] )
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: b7efdd18-f2a7-49b7-ae2a-2720bfd0cead
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column Placeholder
+		isHidden
+		formatString: 0
+		lineageTag: 874c41ba-1679-44ed-9022-7777030470bf
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Placeholder]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measures = calculated
+		mode: import
+		source = ROW("Placeholder", BLANK())
+
+	annotation PBI_Id = eb6d87354c684010bee7ddc77f0f2c20
+

@@ -1,0 +1,88 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "884486434a42b3874a0a",
+    "position":  {
+                     "x":  380,
+                     "y":  88,
+                     "z":  201,
+                     "height":  50,
+                     "width":  250,
+                     "tabOrder":  201
+                 },
+    "visual":  {
+                   "visualType":  "slicer",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Values":  {
+                                                                   "projections":  [
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Column":  {
+                                                                                                                        "Expression":  {
+                                                                                                                                           "SourceRef":  {
+                                                                                                                                                             "Entity":  "DIM_STORE"
+                                                                                                                                                         }
+                                                                                                                                       },
+                                                                                                                        "Property":  "STATE_ID"
+                                                                                                                    }
+                                                                                                     },
+                                                                                           "queryRef":  "DIM_STORE.STATE_ID",
+                                                                                           "nativeQueryRef":  "STATE_ID",
+                                                                                           "active":  true
+                                                                                       }
+                                                                                   ]
+                                                               }
+                                                }
+                             },
+                   "objects":  {
+                                   "data":  [
+                                                {
+                                                    "properties":  {
+                                                                       "mode":  {
+                                                                                    "expr":  {
+                                                                                                 "Literal":  {
+                                                                                                                 "Value":  "\u0027Basic\u0027"
+                                                                                                             }
+                                                                                             }
+                                                                                }
+                                                                   }
+                                                }
+                                            ],
+                                   "general":  [
+                                                   {
+                                                       "properties":  {
+                                                                          "orientation":  {
+                                                                                              "expr":  {
+                                                                                                           "Literal":  {
+                                                                                                                           "Value":  "1D"
+                                                                                                                       }
+                                                                                                       }
+                                                                                          }
+                                                                      }
+                                                   }
+                                               ],
+                                   "header":  [
+                                                  {
+                                                      "properties":  {
+                                                                         "text":  {
+                                                                                      "expr":  {
+                                                                                                   "Literal":  {
+                                                                                                                   "Value":  "\u0027State\u0027"
+                                                                                                               }
+                                                                                               }
+                                                                                  }
+                                                                     }
+                                                  }
+                                              ]
+                               },
+                   "syncGroup":  {
+                                     "groupName":  "STATE_ID",
+                                     "fieldChanges":  true,
+                                     "filterChanges":  true
+                                 },
+                   "drillFilterOtherVisuals":  true,
+                   "visualContainerObjects":  {
+
+                                              }
+               }
+}

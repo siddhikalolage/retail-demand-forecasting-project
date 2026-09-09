@@ -1,0 +1,62 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "47e46b27f87c9cd4ab63",
+    "position":  {
+                     "x":  895,
+                     "y":  160,
+                     "z":  300,
+                     "height":  105,
+                     "width":  360,
+                     "tabOrder":  300
+                 },
+    "visual":  {
+                   "visualType":  "cardVisual",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Data":  {
+                                                                 "projections":  [
+                                                                                     {
+                                                                                         "field":  {
+                                                                                                       "Measure":  {
+                                                                                                                       "Expression":  {
+                                                                                                                                          "SourceRef":  {
+                                                                                                                                                            "Entity":  "_Measures"
+                                                                                                                                                        }
+                                                                                                                                      },
+                                                                                                                       "Property":  "Forecast Revenue"
+                                                                                                                   }
+                                                                                                   },
+                                                                                         "queryRef":  "_Measures.Forecast Revenue",
+                                                                                         "nativeQueryRef":  "Forecast Revenue"
+                                                                                     }
+                                                                                 ]
+                                                             }
+                                                },
+                                 "sortDefinition":  {
+                                                        "sort":  [
+                                                                     {
+                                                                         "field":  {
+                                                                                       "Measure":  {
+                                                                                                       "Expression":  {
+                                                                                                                          "SourceRef":  {
+                                                                                                                                            "Entity":  "_Measures"
+                                                                                                                                        }
+                                                                                                                      },
+                                                                                                       "Property":  "Forecast Revenue"
+                                                                                                   }
+                                                                                   },
+                                                                         "direction":  "Descending"
+                                                                     }
+                                                                 ],
+                                                        "isDefaultSort":  true
+                                                    }
+                             },
+                   "drillFilterOtherVisuals":  true,
+                   "visualContainerObjects":  {
+
+                                              },
+                   "objects":  {
+
+                               }
+               }
+}

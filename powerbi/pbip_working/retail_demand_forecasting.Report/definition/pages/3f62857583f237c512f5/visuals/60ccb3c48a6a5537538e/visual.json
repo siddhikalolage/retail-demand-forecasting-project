@@ -1,0 +1,129 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "60ccb3c48a6a5537538e",
+    "position":  {
+                     "x":  400,
+                     "y":  88,
+                     "z":  201,
+                     "height":  50,
+                     "width":  260,
+                     "tabOrder":  201
+                 },
+    "visual":  {
+                   "visualType":  "slicer",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Values":  {
+                                                                   "projections":  [
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Column":  {
+                                                                                                                        "Expression":  {
+                                                                                                                                           "SourceRef":  {
+                                                                                                                                                             "Entity":  "DIM_ITEM"
+                                                                                                                                                         }
+                                                                                                                                       },
+                                                                                                                        "Property":  "CAT_ID"
+                                                                                                                    }
+                                                                                                     },
+                                                                                           "queryRef":  "DIM_ITEM.CAT_ID",
+                                                                                           "nativeQueryRef":  "CAT_ID",
+                                                                                           "active":  true
+                                                                                       }
+                                                                                   ]
+                                                               }
+                                                }
+                             },
+                   "objects":  {
+                                   "data":  [
+                                                {
+                                                    "properties":  {
+                                                                       "mode":  {
+                                                                                    "expr":  {
+                                                                                                 "Literal":  {
+                                                                                                                 "Value":  "\u0027Basic\u0027"
+                                                                                                             }
+                                                                                             }
+                                                                                }
+                                                                   }
+                                                }
+                                            ],
+                                   "general":  [
+                                                   {
+                                                       "properties":  {
+                                                                          "orientation":  {
+                                                                                              "expr":  {
+                                                                                                           "Literal":  {
+                                                                                                                           "Value":  "1D"
+                                                                                                                       }
+                                                                                                       }
+                                                                                          },
+                                                                          "filter":  {
+                                                                                         "filter":  {
+                                                                                                        "Version":  2,
+                                                                                                        "From":  [
+                                                                                                                     {
+                                                                                                                         "Name":  "d",
+                                                                                                                         "Entity":  "DIM_ITEM",
+                                                                                                                         "Type":  0
+                                                                                                                     }
+                                                                                                                 ],
+                                                                                                        "Where":  [
+                                                                                                                      {
+                                                                                                                          "Condition":  {
+                                                                                                                                            "In":  {
+                                                                                                                                                       "Expressions":  [
+                                                                                                                                                                           {
+                                                                                                                                                                               "Column":  {
+                                                                                                                                                                                              "Expression":  {
+                                                                                                                                                                                                                 "SourceRef":  {
+                                                                                                                                                                                                                                   "Source":  "d"
+                                                                                                                                                                                                                               }
+                                                                                                                                                                                                             },
+                                                                                                                                                                                              "Property":  "CAT_ID"
+                                                                                                                                                                                          }
+                                                                                                                                                                           }
+                                                                                                                                                                       ],
+                                                                                                                                                       "Values":  [
+                                                                                                                                                                      [
+                                                                                                                                                                          {
+                                                                                                                                                                              "Literal":  {
+                                                                                                                                                                                              "Value":  "\u0027HOBBIES\u0027"
+                                                                                                                                                                                          }
+                                                                                                                                                                          }
+                                                                                                                                                                      ]
+                                                                                                                                                                  ]
+                                                                                                                                                   }
+                                                                                                                                        }
+                                                                                                                      }
+                                                                                                                  ]
+                                                                                                    }
+                                                                                     }
+                                                                      }
+                                                   }
+                                               ],
+                                   "header":  [
+                                                  {
+                                                      "properties":  {
+                                                                         "text":  {
+                                                                                      "expr":  {
+                                                                                                   "Literal":  {
+                                                                                                                   "Value":  "\u0027Category\u0027"
+                                                                                                               }
+                                                                                               }
+                                                                                  }
+                                                                     }
+                                                  }
+                                              ]
+                               },
+                   "syncGroup":  {
+                                     "groupName":  "CAT_ID",
+                                     "fieldChanges":  true,
+                                     "filterChanges":  true
+                                 },
+                   "drillFilterOtherVisuals":  true,
+                   "visualContainerObjects":  {
+
+                                              }
+               }
+}

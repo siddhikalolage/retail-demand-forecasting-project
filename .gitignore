@@ -152,3 +152,7 @@ temp/
 # =============================================================================
 .ipynb_checkpoints/
 *.ipynb_checkpoints
+
+powerbi/pbip_working/**/*.pbi/cache.abf
+
+/powerbi/pbip_working/**/.pbi/cache.abf

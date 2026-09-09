@@ -1,0 +1,102 @@
+table MART_FORECAST_VS_ACTUAL
+	lineageTag: 4da48da8-4c27-4d1e-bf60-55553beffcfd
+
+	column DATE_KEY
+		dataType: string
+		lineageTag: 7557fa91-34aa-412b-8985-294af4b6f6e3
+		summarizeBy: none
+		sourceColumn: DATE_KEY
+
+		annotation SummarizationSetBy = Automatic
+
+	column ITEM_KEY
+		dataType: string
+		lineageTag: ca37b906-4dab-4787-841c-5f7875063c0c
+		summarizeBy: none
+		sourceColumn: ITEM_KEY
+
+		annotation SummarizationSetBy = Automatic
+
+	column OBSERVATION_DATE
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: e03f8ade-1006-4d91-a59b-66537f045906
+		summarizeBy: none
+		sourceColumn: OBSERVATION_DATE
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column ITEM_ID
+		dataType: string
+		lineageTag: 7fd4ac0d-499c-4d0d-a2db-058ac61fbf44
+		summarizeBy: none
+		sourceColumn: ITEM_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column UNITS
+		dataType: double
+		lineageTag: 4a1eeba8-1255-42ec-8bea-8c4b0a3d63ce
+		summarizeBy: sum
+		sourceColumn: UNITS
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column REVENUE_USD
+		dataType: double
+		lineageTag: 92a7cbec-c17b-4d2d-9303-b60b0b475673
+		summarizeBy: sum
+		sourceColumn: REVENUE_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column UNITS_LOWER_95
+		dataType: double
+		lineageTag: b9f1af78-ceb7-49ae-b865-b83566964f09
+		summarizeBy: sum
+		sourceColumn: UNITS_LOWER_95
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column UNITS_UPPER_95
+		dataType: double
+		lineageTag: 414fe08e-1595-4b0a-8894-0ced55fbe588
+		summarizeBy: sum
+		sourceColumn: UNITS_UPPER_95
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SERIES_TYPE
+		dataType: string
+		lineageTag: b2ae1b20-e4c2-4988-a673-f4c2a2eac18a
+		summarizeBy: none
+		sourceColumn: SERIES_TYPE
+
+		annotation SummarizationSetBy = Automatic
+
+	partition MART_FORECAST_VS_ACTUAL = m
+		mode: import
+		source =
+				let
+				  Source = Snowflake.Databases("tq94402.ap-southeast-2.snowflakecomputing.com", "WH_RETAIL", [Role = null, CreateNavigationProperties = null, ConnectionTimeout = null, CommandTimeout = null, Implementation = "2.0"]),
+				  #"Navigation 1" = Source{[Name = "RETAIL_DB", Kind = "Database"]}[Data],
+				  #"Navigation 2" = #"Navigation 1"{[Name = "MARTS", Kind = "Schema"]}[Data],
+				  #"Navigation 3" = #"Navigation 2"{[Name = "MART_FORECAST_VS_ACTUAL", Kind = "Table"]}[Data],
+				    #"Capitalized Each Word" = Table.TransformColumns(#"Navigation 3",{{"SERIES_TYPE", Text.Proper, type text}})
+				in
+				    #"Capitalized Each Word"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

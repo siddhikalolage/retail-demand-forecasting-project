@@ -1,0 +1,130 @@
+table FACT_DAILY_SALES
+	isHidden
+	lineageTag: 24802966-f0ee-4b54-9d9e-ecbbcde9441d
+
+	column ITEM_KEY
+		dataType: string
+		isHidden
+		lineageTag: 6a7b7bbb-d780-471b-95ad-7f96f1062644
+		summarizeBy: none
+		sourceColumn: ITEM_KEY
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column STORE_KEY
+		dataType: string
+		isHidden
+		lineageTag: dbc283c8-67cc-4584-9e37-4690ce93cdeb
+		summarizeBy: none
+		sourceColumn: STORE_KEY
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column DATE_KEY
+		dataType: string
+		isHidden
+		lineageTag: f60e0194-bb65-44f1-9492-f9189dd6c604
+		summarizeBy: none
+		sourceColumn: DATE_KEY
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ITEM_ID
+		dataType: string
+		isHidden
+		lineageTag: c145a10c-dd0f-46dd-bc61-34fb91e89594
+		summarizeBy: none
+		sourceColumn: ITEM_ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column STORE_ID
+		dataType: string
+		isHidden
+		lineageTag: 9176ead9-5920-4148-a4bc-b8be0088a3f4
+		summarizeBy: none
+		sourceColumn: STORE_ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SALE_DATE
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: bb635533-6835-42b5-b7ae-509b047c48af
+		summarizeBy: none
+		sourceColumn: SALE_DATE
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column UNITS_SOLD
+		dataType: double
+		isHidden
+		lineageTag: 35f1462f-f6c2-4798-bdd9-118c080b98e4
+		summarizeBy: sum
+		sourceColumn: UNITS_SOLD
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SELL_PRICE
+		dataType: double
+		isHidden
+		lineageTag: 958fdb75-70f5-46bd-8a5f-8de991cfc186
+		summarizeBy: sum
+		sourceColumn: SELL_PRICE
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column REVENUE_AMOUNT_USD
+		dataType: double
+		isHidden
+		lineageTag: 443f7301-9115-40f6-8ab7-f3d34cfb9dc5
+		summarizeBy: sum
+		sourceColumn: REVENUE_AMOUNT_USD
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition FACT_DAILY_SALES = m
+		mode: import
+		source =
+				let
+				  Source = Snowflake.Databases("tq94402.ap-southeast-2.snowflakecomputing.com", "WH_RETAIL", [Role = null, CreateNavigationProperties = null, ConnectionTimeout = null, CommandTimeout = null, Implementation = "2.0"]),
+				  #"Navigation 1" = Source{[Name = "RETAIL_DB", Kind = "Database"]}[Data],
+				  #"Navigation 2" = #"Navigation 1"{[Name = "WAREHOUSE", Kind = "Schema"]}[Data],
+				  #"Navigation 3" = #"Navigation 2"{[Name = "FACT_DAILY_SALES", Kind = "Table"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(#"Navigation 3",{"SALE_KEY"})
+				in
+				  #"Removed Columns"
+
+	changedProperty = IsHidden
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

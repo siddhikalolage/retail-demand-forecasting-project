@@ -1,0 +1,63 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "23ccdd34f5b2e0ddd9cc",
+    "position":  {
+                     "x":  625,
+                     "y":  160,
+                     "z":  302,
+                     "height":  105,
+                     "width":  280,
+                     "tabOrder":  302
+                 },
+    "visual":  {
+                   "visualType":  "cardVisual",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Data":  {
+                                                                 "projections":  [
+                                                                                     {
+                                                                                         "field":  {
+                                                                                                       "Measure":  {
+                                                                                                                       "Expression":  {
+                                                                                                                                          "SourceRef":  {
+                                                                                                                                                            "Entity":  "_Measures"
+                                                                                                                                                        }
+                                                                                                                                      },
+                                                                                                                       "Property":  "Active Stores"
+                                                                                                                   }
+                                                                                                   },
+                                                                                         "queryRef":  "_Measures.Active Stores",
+                                                                                         "nativeQueryRef":  "Stores",
+                                                                                         "displayName":  "Stores"
+                                                                                     }
+                                                                                 ]
+                                                             }
+                                                },
+                                 "sortDefinition":  {
+                                                        "sort":  [
+                                                                     {
+                                                                         "field":  {
+                                                                                       "Measure":  {
+                                                                                                       "Expression":  {
+                                                                                                                          "SourceRef":  {
+                                                                                                                                            "Entity":  "_Measures"
+                                                                                                                                        }
+                                                                                                                      },
+                                                                                                       "Property":  "Active Stores"
+                                                                                                   }
+                                                                                   },
+                                                                         "direction":  "Descending"
+                                                                     }
+                                                                 ],
+                                                        "isDefaultSort":  true
+                                                    }
+                             },
+                   "drillFilterOtherVisuals":  true,
+                   "visualContainerObjects":  {
+
+                                              },
+                   "objects":  {
+
+                               }
+               }
+}

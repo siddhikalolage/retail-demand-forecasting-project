@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "retail_demand_forecasting"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "3577f3d0-47ce-41d5-ab60-09e8a430a6f4"
+  }
+}

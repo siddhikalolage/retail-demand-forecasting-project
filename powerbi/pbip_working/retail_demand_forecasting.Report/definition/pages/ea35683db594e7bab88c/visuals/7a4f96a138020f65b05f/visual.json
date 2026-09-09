@@ -1,0 +1,120 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "7a4f96a138020f65b05f",
+    "position":  {
+                     "x":  25,
+                     "y":  88,
+                     "z":  200,
+                     "height":  50,
+                     "width":  340,
+                     "tabOrder":  200
+                 },
+    "visual":  {
+                   "visualType":  "slicer",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Values":  {
+                                                                   "projections":  [
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Column":  {
+                                                                                                                        "Expression":  {
+                                                                                                                                           "SourceRef":  {
+                                                                                                                                                             "Entity":  "DIM_CALENDAR"
+                                                                                                                                                         }
+                                                                                                                                       },
+                                                                                                                        "Property":  "CALENDAR_DATE"
+                                                                                                                    }
+                                                                                                     },
+                                                                                           "queryRef":  "DIM_CALENDAR.CALENDAR_DATE",
+                                                                                           "nativeQueryRef":  "CALENDAR_DATE",
+                                                                                           "active":  true
+                                                                                       }
+                                                                                   ]
+                                                               }
+                                                },
+                                 "sortDefinition":  {
+                                                        "sort":  [
+                                                                     {
+                                                                         "field":  {
+                                                                                       "Column":  {
+                                                                                                      "Expression":  {
+                                                                                                                         "SourceRef":  {
+                                                                                                                                           "Entity":  "DIM_CALENDAR"
+                                                                                                                                       }
+                                                                                                                     },
+                                                                                                      "Property":  "CALENDAR_DATE"
+                                                                                                  }
+                                                                                   },
+                                                                         "direction":  "Ascending"
+                                                                     }
+                                                                 ],
+                                                        "isDefaultSort":  true
+                                                    }
+                             },
+                   "objects":  {
+                                   "data":  [
+                                                {
+                                                    "properties":  {
+                                                                       "endDate":  {
+                                                                                       "expr":  {
+                                                                                                    "Literal":  {
+                                                                                                                    "Value":  "datetime\u00272014-05-22T00:00:00\u0027"
+                                                                                                                }
+                                                                                                }
+                                                                                   },
+                                                                       "mode":  {
+                                                                                    "expr":  {
+                                                                                                 "Literal":  {
+                                                                                                                 "Value":  "\u0027Between\u0027"
+                                                                                                             }
+                                                                                             }
+                                                                                }
+                                                                   }
+                                                }
+                                            ],
+                                   "general":  [
+                                                   {
+                                                       "properties":  {
+
+                                                                      }
+                                                   }
+                                               ],
+                                   "slider":  [
+                                                  {
+                                                      "properties":  {
+                                                                         "show":  {
+                                                                                      "expr":  {
+                                                                                                   "Literal":  {
+                                                                                                                   "Value":  "false"
+                                                                                                               }
+                                                                                               }
+                                                                                  }
+                                                                     }
+                                                  }
+                                              ],
+                                   "header":  [
+                                                  {
+                                                      "properties":  {
+                                                                         "text":  {
+                                                                                      "expr":  {
+                                                                                                   "Literal":  {
+                                                                                                                   "Value":  "\u0027Date\u0027"
+                                                                                                               }
+                                                                                               }
+                                                                                  }
+                                                                     }
+                                                  }
+                                              ]
+                               },
+                   "syncGroup":  {
+                                     "groupName":  "CALENDAR_DATE1",
+                                     "fieldChanges":  true,
+                                     "filterChanges":  true
+                                 },
+                   "drillFilterOtherVisuals":  true,
+                   "visualContainerObjects":  {
+
+                                              }
+               }
+}
