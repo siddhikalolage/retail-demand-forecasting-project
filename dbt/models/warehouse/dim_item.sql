@@ -2,7 +2,7 @@
 -- Item dimension. One row per distinct M5 item (~3,049 rows).
 -- Surrogate item_key via dbt_utils.generate_surrogate_key on item_id.
 -- dept_id and cat_id come straight from staging — no string parsing.
--- See DBT_PIPELINE.md for the full walkthrough.
+-- See README.md for the local build workflow.
 
 WITH source AS (
     SELECT DISTINCT

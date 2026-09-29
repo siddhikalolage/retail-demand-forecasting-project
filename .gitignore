@@ -99,8 +99,9 @@ standalone_admin_password.txt
 # =============================================================================
 # Power BI
 # =============================================================================
-# .pbix files SHOULD be committed for portfolio purposes
-# Lock and temp files should not
+# The PBIP source is canonical. Desktop cache and packaged exports are local.
+powerbi/**/.pbi/
+powerbi/**/*.pbix
 *.pbix.lock
 *.pbix.bak
 ~$*.pbix
@@ -152,7 +153,3 @@ temp/
 # =============================================================================
 .ipynb_checkpoints/
 *.ipynb_checkpoints
-
-powerbi/pbip_working/**/*.pbi/cache.abf
-
-/powerbi/pbip_working/**/.pbi/cache.abf

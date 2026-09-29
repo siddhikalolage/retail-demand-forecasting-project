@@ -1,369 +1,68 @@
--- =============================================================================
--- sql/profile/00_comprehensive_data_profile.sql
--- =============================================================================
--- Phase 4 Data Profiling Queries
--- Validates all assumptions in docs/DATA_CONTRACT.md
--- 
--- Execute this against Snowflake RETAIL_DB.RAW schema
--- Results feed into docs/DATA_QUALITY.md
--- =============================================================================
+-- Read-only quality profile for the current RETAIL_DB pipeline.
+-- Run each query independently in Snowsight after the Azure extraction and dbt build.
+-- The checks deliberately use the long-format RAW.SALES_TRAIN source and
+-- conformed WAREHOUSE/MARTS objects; no obsolete DEV schema or pivoted source
+-- table names are referenced.
 
--- ====== DIMENSION: CALENDARS ======
--- Validate calendar completeness and date range
+USE DATABASE RETAIL_DB;
+USE WAREHOUSE WH_RETAIL;
 
-SELECT 'Calendar Dimension' AS check_category,
-       'Date Range' AS check_name,
-       TO_VARCHAR(MIN(DATE)) AS result_min_date,
-       TO_VARCHAR(MAX(DATE)) AS result_max_date,
-       COUNT(*) AS total_days,
-       COUNT(DISTINCT DATE) AS unique_days
-FROM RAW.CALENDAR
-;
+-- 1. Raw calendar: valid date conversion and unique M5 day keys.
+SELECT
+    COUNT(*) AS row_count,
+    COUNT(DISTINCT d) AS distinct_day_keys,
+    MIN(TRY_TO_DATE(date)) AS first_date,
+    MAX(TRY_TO_DATE(date)) AS last_date,
+    COUNT_IF(TRY_TO_DATE(date) IS NULL) AS invalid_date_count
+FROM RAW.CALENDAR;
 
--- Check for date gaps
-WITH date_range AS (
-    SELECT 
-        MIN(DATE) AS min_date,
-        MAX(DATE) AS max_date,
-        DATEDIFF(DAY, min_date, max_date) + 1 AS expected_days
-    FROM RAW.CALENDAR
-)
-SELECT 'Calendar Dimension' AS check_category,
-       'Date Continuity' AS check_name,
-       expected_days AS expected_day_count,
-       (SELECT COUNT(*) FROM RAW.CALENDAR) AS actual_day_count,
-       CASE 
-           WHEN expected_days = (SELECT COUNT(*) FROM RAW.CALENDAR) 
-           THEN 'PASS - No gaps'
-           ELSE 'FAIL - Gaps detected'
-       END AS status
-FROM date_range
-;
+-- 2. Raw sales: expected series x day grain and unit validity.
+SELECT
+    COUNT(*) AS row_count,
+    COUNT(DISTINCT id || '|' || d) AS distinct_series_day_keys,
+    COUNT_IF(sales < 0) AS negative_unit_rows,
+    COUNT_IF(sales IS NULL) AS null_unit_rows,
+    COUNT(DISTINCT item_id) AS item_count,
+    COUNT(DISTINCT store_id) AS store_count
+FROM RAW.SALES_TRAIN;
 
--- Calendar attributes validation
-SELECT 'Calendar Dimension' AS check_category,
-       'Attributes' AS check_name,
-       COUNT(DISTINCT WEEKDAY) AS unique_weekdays,
-       COUNT(DISTINCT MONTH) AS unique_months,
-       COUNT(DISTINCT YEAR) AS unique_years,
-       COUNT(DISTINCT WM_YR_WK) AS unique_walmart_weeks,
-       SUM(CASE WHEN EVENT_NAME_1 IS NOT NULL THEN 1 ELSE 0 END) AS days_with_event_1,
-       SUM(CASE WHEN EVENT_NAME_2 IS NOT NULL THEN 1 ELSE 0 END) AS days_with_event_2
-FROM RAW.CALENDAR
-;
+-- 3. Raw prices: weekly item-store uniqueness and valid non-negative prices.
+SELECT
+    COUNT(*) AS row_count,
+    COUNT(DISTINCT store_id || '|' || item_id || '|' || wm_yr_wk) AS distinct_price_keys,
+    COUNT_IF(sell_price < 0) AS negative_price_rows,
+    COUNT_IF(sell_price IS NULL) AS null_price_rows,
+    MIN(sell_price) AS minimum_price,
+    MAX(sell_price) AS maximum_price
+FROM RAW.SELL_PRICES;
 
--- ====== DIMENSION: ITEMS (PRODUCTS) ======
+-- 4. Conformed daily fact: sales coverage, totals and price sparsity.
+SELECT
+    COUNT(*) AS row_count,
+    MIN(sale_date) AS first_sale_date,
+    MAX(sale_date) AS last_sale_date,
+    SUM(units_sold) AS total_units,
+    SUM(revenue_amount_usd) AS total_revenue_usd,
+    COUNT_IF(sell_price IS NULL) AS missing_price_rows
+FROM WAREHOUSE.FACT_DAILY_SALES;
 
-SELECT 'Item Dimension' AS check_category,
-       'Item Counts' AS check_name,
-       COUNT(DISTINCT ITEM_ID) AS unique_items,
-       MIN(ITEM_ID) AS min_item_id,
-       MAX(ITEM_ID) AS max_item_id,
-       COUNT(*) AS total_rows
-FROM RAW.M5_SALES_TRAIN
-;
+-- 5. Forecast facts: forecast horizon and interval validity.
+SELECT
+    COUNT(*) AS row_count,
+    MIN(forecast_date) AS first_forecast_date,
+    MAX(forecast_date) AS last_forecast_date,
+    COUNT(DISTINCT item_id) AS item_count,
+    COUNT_IF(forecast_units < 0) AS negative_forecast_rows,
+    COUNT_IF(forecast_units_lower_95 > forecast_units_upper_95) AS invalid_interval_rows
+FROM WAREHOUSE.FACT_FORECAST_DAILY;
 
--- ====== DIMENSION: STORES ======
-
-SELECT 'Store Dimension' AS check_category,
-       'Store Counts' AS check_name,
-       COUNT(DISTINCT STORE_ID) AS unique_stores,
-       MIN(STORE_ID) AS min_store_id,
-       MAX(STORE_ID) AS max_store_id,
-       COUNT(*) AS total_rows
-FROM RAW.M5_SALES_TRAIN
-;
-
--- ====== FACT: SALES TRANSACTIONS ======
--- Validate grain, cardinality, and value distributions
-
-SELECT 'Sales Fact' AS check_category,
-       'Grain' AS check_name,
-       COUNT(*) AS total_rows,
-       COUNT(DISTINCT (STORE_ID || '|' || ITEM_ID || '|' || DATE)) AS unique_keys,
-       CASE 
-           WHEN COUNT(*) = COUNT(DISTINCT (STORE_ID || '|' || ITEM_ID || '|' || DATE))
-           THEN 'PASS - Grain is Item × Store × Day'
-           ELSE 'FAIL - Duplicates detected'
-       END AS status
-FROM RAW.M5_SALES_TRAIN
-;
-
--- Sales value distribution
-SELECT 'Sales Fact' AS check_category,
-       'Sales Values' AS check_name,
-       MIN(SALES) AS min_sales,
-       MAX(SALES) AS max_sales,
-       AVG(SALES) AS avg_sales,
-       STDDEV(SALES) AS stddev_sales,
-       SUM(CASE WHEN SALES < 0 THEN 1 ELSE 0 END) AS negative_sales_count,
-       SUM(CASE WHEN SALES = 0 THEN 1 ELSE 0 END) AS zero_sales_count,
-       SUM(CASE WHEN SALES IS NULL THEN 1 ELSE 0 END) AS null_sales_count
-FROM RAW.M5_SALES_TRAIN
-;
-
--- Sales date range
-SELECT 'Sales Fact' AS check_category,
-       'Date Range' AS check_name,
-       TO_VARCHAR(MIN(DATE)) AS min_date,
-       TO_VARCHAR(MAX(DATE)) AS max_date,
-       COUNT(DISTINCT DATE) AS unique_dates,
-       DATEDIFF(DAY, MIN(DATE), MAX(DATE)) + 1 AS expected_date_span
-FROM RAW.M5_SALES_TRAIN
-;
-
--- Sales completeness (store × item × date coverage)
-WITH expected_combos AS (
-    SELECT COUNT(DISTINCT STORE_ID) * COUNT(DISTINCT ITEM_ID) * COUNT(DISTINCT DATE) AS total_possible_combos
-    FROM RAW.M5_SALES_TRAIN
-)
-SELECT 'Sales Fact' AS check_category,
-       'Completeness' AS check_name,
-       (SELECT total_possible_combos FROM expected_combos) AS expected_rows,
-       COUNT(*) AS actual_rows,
-       ROUND(100.0 * COUNT(*) / (SELECT total_possible_combos FROM expected_combos), 2) AS coverage_percent
-FROM RAW.M5_SALES_TRAIN
-;
-
--- ====== DIMENSION: PRICES ======
--- Validate price data grain and coverage
-
-SELECT 'Price Data' AS check_category,
-       'Grain' AS check_name,
-       COUNT(*) AS total_rows,
-       COUNT(DISTINCT (STORE_ID || '|' || ITEM_ID || '|' || WM_YR_WK)) AS unique_keys,
-       CASE 
-           WHEN COUNT(*) = COUNT(DISTINCT (STORE_ID || '|' || ITEM_ID || '|' || WM_YR_WK))
-           THEN 'PASS - Grain is Item × Store × Week'
-           ELSE 'FAIL - Duplicates detected'
-       END AS status
-FROM RAW.SELL_PRICES
-;
-
--- Price value distribution
-SELECT 'Price Data' AS check_category,
-       'Price Values' AS check_name,
-       COUNT(*) AS total_rows,
-       SUM(CASE WHEN SELL_PRICE IS NULL THEN 1 ELSE 0 END) AS null_prices,
-       MIN(SELL_PRICE) AS min_price,
-       MAX(SELL_PRICE) AS max_price,
-       AVG(SELL_PRICE) AS avg_price,
-       SUM(CASE WHEN SELL_PRICE < 0 THEN 1 ELSE 0 END) AS negative_price_count,
-       SUM(CASE WHEN SELL_PRICE = 0 THEN 1 ELSE 0 END) AS zero_price_count
-FROM RAW.SELL_PRICES
-;
-
--- Price coverage (what % of item × store × week combos have prices)
-WITH max_combos AS (
-    SELECT 
-        COUNT(DISTINCT STORE_ID) AS store_count,
-        COUNT(DISTINCT ITEM_ID) AS item_count,
-        COUNT(DISTINCT WM_YR_WK) AS week_count
-    FROM RAW.SELL_PRICES
-)
-SELECT 'Price Data' AS check_category,
-       'Coverage' AS check_name,
-       (SELECT store_count * item_count * week_count FROM max_combos) AS max_possible_rows,
-       COUNT(*) AS actual_rows,
-       ROUND(100.0 * COUNT(*) / (SELECT store_count * item_count * week_count FROM max_combos), 2) AS coverage_percent
-FROM RAW.SELL_PRICES
-;
-
--- ====== DATA QUALITY: ANOMALIES ======
-
-SELECT 'Data Quality' AS check_category,
-       'Negative or Zero Sales' AS check_name,
-       COUNT(*) AS anomaly_count,
-       ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM RAW.M5_SALES_TRAIN), 2) AS percent_of_total
-FROM RAW.M5_SALES_TRAIN
-WHERE SALES <= 0
-;
-
-SELECT 'Data Quality' AS check_category,
-       'NULL Sales Values' AS check_name,
-       COUNT(*) AS anomaly_count,
-       ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM RAW.M5_SALES_TRAIN), 2) AS percent_of_total
-FROM RAW.M5_SALES_TRAIN
-WHERE SALES IS NULL
-;
-
-SELECT 'Data Quality' AS check_category,
-       'NULL Price Values' AS check_name,
-       COUNT(*) AS anomaly_count,
-       ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM RAW.SELL_PRICES), 2) AS percent_of_total
-FROM RAW.SELL_PRICES
-WHERE SELL_PRICE IS NULL
-;
-
--- ====== STAGING LAYER VALIDATION ======
--- These queries validate the transformation at the staging layer
-
-SELECT 'Staging Layer' AS check_category,
-       'stg_m5_sales_train' AS check_name,
-       COUNT(*) AS row_count,
-       COUNT(DISTINCT (STORE_ID || '|' || ITEM_ID || '|' || DATE)) AS unique_keys,
-       SUM(CASE WHEN SALES IS NULL THEN 1 ELSE 0 END) AS null_count
-FROM DEV.STAGING.STG_M5_SALES_TRAIN
-;
-
-SELECT 'Staging Layer' AS check_category,
-       'stg_m5_calendar' AS check_name,
-       COUNT(*) AS row_count,
-       COUNT(DISTINCT DATE) AS unique_dates
-FROM DEV.STAGING.STG_M5_CALENDAR
-;
-
-SELECT 'Staging Layer' AS check_category,
-       'stg_m5_sell_prices' AS check_name,
-       COUNT(*) AS row_count,
-       COUNT(DISTINCT (STORE_ID || '|' || ITEM_ID || '|' || WM_YR_WK)) AS unique_keys,
-       SUM(CASE WHEN SELL_PRICE IS NULL THEN 1 ELSE 0 END) AS null_prices
-FROM DEV.STAGING.STG_M5_SELL_PRICES
-;
-
--- ====== INTERMEDIATE LAYER VALIDATION ======
-
-SELECT 'Intermediate Layer' AS check_category,
-       'int_sales_with_prices' AS check_name,
-       COUNT(*) AS row_count,
-       SUM(CASE WHEN SELL_PRICE IS NULL THEN 1 ELSE 0 END) AS null_prices,
-       MIN(DATE) AS min_date,
-       MAX(DATE) AS max_date
-FROM DEV.INTERMEDIATE.INT_SALES_WITH_PRICES
-;
-
-SELECT 'Intermediate Layer' AS check_category,
-       'int_forecast_input Grain' AS check_name,
-       COUNT(*) AS total_rows,
-       COUNT(DISTINCT ITEM_ID) AS unique_items,
-       COUNT(DISTINCT DATE) AS unique_dates,
-       (SELECT COUNT(DISTINCT ITEM_ID) FROM DEV.INTERMEDIATE.INT_FORECAST_INPUT) * 
-       (SELECT COUNT(DISTINCT DATE) FROM DEV.INTERMEDIATE.INT_FORECAST_INPUT) AS expected_dense_rows
-FROM DEV.INTERMEDIATE.INT_FORECAST_INPUT
-;
-
-SELECT 'Intermediate Layer' AS check_category,
-       'int_forecast_input Values' AS check_name,
-       MIN(AGGREGATE_SALES) AS min_agg_sales,
-       MAX(AGGREGATE_SALES) AS max_agg_sales,
-       AVG(AGGREGATE_SALES) AS avg_agg_sales,
-       SUM(CASE WHEN AGGREGATE_SALES < 0 THEN 1 ELSE 0 END) AS negative_count,
-       SUM(CASE WHEN AGGREGATE_SALES IS NULL THEN 1 ELSE 0 END) AS null_count
-FROM DEV.INTERMEDIATE.INT_FORECAST_INPUT
-;
-
--- ====== WAREHOUSE LAYER VALIDATION ======
-
-SELECT 'Warehouse Layer' AS check_category,
-       'dim_calendar' AS check_name,
-       COUNT(*) AS row_count,
-       COUNT(DISTINCT DATE_ID) AS unique_keys,
-       MIN(DATE) AS min_date,
-       MAX(DATE) AS max_date
-FROM DEV.WAREHOUSE.DIM_CALENDAR
-;
-
-SELECT 'Warehouse Layer' AS check_category,
-       'dim_item' AS check_name,
-       COUNT(*) AS row_count,
-       COUNT(DISTINCT ITEM_ID) AS unique_items,
-       COUNT(DISTINCT CATEGORY) AS unique_categories,
-       COUNT(DISTINCT DEPARTMENT) AS unique_departments
-FROM DEV.WAREHOUSE.DIM_ITEM
-;
-
-SELECT 'Warehouse Layer' AS check_category,
-       'dim_store' AS check_name,
-       COUNT(*) AS row_count,
-       COUNT(DISTINCT STORE_ID) AS unique_stores
-FROM DEV.WAREHOUSE.DIM_STORE
-;
-
-SELECT 'Warehouse Layer' AS check_category,
-       'fact_daily_sales Grain' AS check_name,
-       COUNT(*) AS total_rows,
-       COUNT(DISTINCT (STORE_ID || '|' || ITEM_ID || '|' || DATE)) AS unique_keys,
-       CASE 
-           WHEN COUNT(*) = COUNT(DISTINCT (STORE_ID || '|' || ITEM_ID || '|' || DATE))
-           THEN 'PASS - Grain preserved'
-           ELSE 'FAIL - Grain corrupted'
-       END AS status
-FROM DEV.WAREHOUSE.FACT_DAILY_SALES
-;
-
-SELECT 'Warehouse Layer' AS check_category,
-       'fact_daily_sales Values' AS check_name,
-       MIN(SALES_UNITS) AS min_units,
-       MAX(SALES_UNITS) AS max_units,
-       AVG(SALES_UNITS) AS avg_units,
-       SUM(CASE WHEN SALES_UNITS < 0 THEN 1 ELSE 0 END) AS negative_count,
-       SUM(CASE WHEN SALES_UNITS IS NULL THEN 1 ELSE 0 END) AS null_count
-FROM DEV.WAREHOUSE.FACT_DAILY_SALES
-;
-
-SELECT 'Warehouse Layer' AS check_category,
-       'fact_forecast_daily Grain' AS check_name,
-       COUNT(*) AS total_rows,
-       COUNT(DISTINCT ITEM_ID) AS unique_items,
-       COUNT(DISTINCT FORECAST_DATE) AS unique_dates,
-       MIN(FORECAST_DATE) AS min_date,
-       MAX(FORECAST_DATE) AS max_date
-FROM DEV.WAREHOUSE.FACT_FORECAST_DAILY
-;
-
-SELECT 'Warehouse Layer' AS check_category,
-       'fact_forecast_daily Values' AS check_name,
-       MIN(FORECAST_VALUE) AS min_forecast,
-       MAX(FORECAST_VALUE) AS max_forecast,
-       AVG(FORECAST_VALUE) AS avg_forecast,
-       SUM(CASE WHEN FORECAST_VALUE < 0 THEN 1 ELSE 0 END) AS negative_count,
-       SUM(CASE WHEN FORECAST_VALUE IS NULL THEN 1 ELSE 0 END) AS null_count,
-       SUM(CASE WHEN LOWER_BOUND_95 IS NULL THEN 1 ELSE 0 END) AS null_lower_ci,
-       SUM(CASE WHEN UPPER_BOUND_95 IS NULL THEN 1 ELSE 0 END) AS null_upper_ci
-FROM DEV.WAREHOUSE.FACT_FORECAST_DAILY
-;
-
--- ====== MART LAYER VALIDATION ======
-
-SELECT 'Mart Layer' AS check_category,
-       'mart_forecast_vs_actual Grain' AS check_name,
-       COUNT(*) AS total_rows,
-       COUNT(DISTINCT ITEM_ID) AS unique_items,
-       COUNT(DISTINCT FORECAST_DATE) AS unique_dates,
-       SUM(CASE WHEN ACTUAL_UNITS IS NULL THEN 1 ELSE 0 END) AS null_actual,
-       SUM(CASE WHEN FORECAST_VALUE IS NULL THEN 1 ELSE 0 END) AS null_forecast
-FROM DEV.MARTS.MART_FORECAST_VS_ACTUAL
-;
-
--- ====== CROSS-LAYER INTEGRITY ======
-
-SELECT 'Integrity Check' AS check_category,
-       'Date Alignment' AS check_name,
-       'CALENDAR' AS table_name,
-       COUNT(DISTINCT DATE) AS unique_dates,
-       MIN(DATE) AS min_date,
-       MAX(DATE) AS max_date
-FROM DEV.STAGING.STG_M5_CALENDAR
-
-UNION ALL
-
-SELECT 'Integrity Check',
-       'Date Alignment',
-       'SALES',
-       COUNT(DISTINCT DATE),
-       MIN(DATE),
-       MAX(DATE)
-FROM DEV.WAREHOUSE.FACT_DAILY_SALES
-
-UNION ALL
-
-SELECT 'Integrity Check',
-       'Date Alignment',
-       'FORECAST',
-       COUNT(DISTINCT FORECAST_DATE),
-       MIN(FORECAST_DATE),
-       MAX(FORECAST_DATE)
-FROM DEV.WAREHOUSE.FACT_FORECAST_DAILY
-;
-
--- ====== END OF PROFILING QUERIES ======
+-- 6. Actual-vs-forecast reporting mart: grain by series type.
+SELECT
+    series_type,
+    COUNT(*) AS row_count,
+    COUNT(DISTINCT item_id || '|' || observation_date) AS distinct_item_date_keys,
+    MIN(observation_date) AS first_observation_date,
+    MAX(observation_date) AS last_observation_date
+FROM MARTS.MART_FORECAST_VS_ACTUAL
+GROUP BY series_type
+ORDER BY series_type;

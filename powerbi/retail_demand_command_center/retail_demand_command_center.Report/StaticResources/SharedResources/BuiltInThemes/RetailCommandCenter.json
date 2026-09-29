@@ -1,0 +1,50 @@
+{
+    "name":  "Retail Command Center",
+    "dataColors":  [
+                       "#42D3A8",
+                       "#66A8FF",
+                       "#FDBF5A",
+                       "#F47C9B",
+                       "#A78BFA",
+                       "#2DD4BF",
+                       "#F97316",
+                       "#94A3B8"
+                   ],
+    "background":  "#0B1020",
+    "foreground":  "#E6EDF7",
+    "tableAccent":  "#42D3A8",
+    "visualStyles":  {
+                         "*":  {
+                                   "*":  {
+                                             "background":  [
+                                                                {
+                                                                    "show":  true,
+                                                                    "color":  {
+                                                                                  "solid":  {
+                                                                                                "color":  "#121A2E"
+                                                                                            }
+                                                                              },
+                                                                    "transparency":  4
+                                                                }
+                                                            ],
+                                             "title":  [
+                                                           {
+                                                               "show":  true,
+                                                               "color":  {
+                                                                             "solid":  {
+                                                                                           "color":  "#E6EDF7"
+                                                                                       }
+                                                                         },
+                                                               "fontSize":  13,
+                                                               "fontFamily":  "Segoe UI Semibold"
+                                                           }
+                                                       ],
+                                             "border":  [
+                                                            {
+                                                                "show":  false
+                                                            }
+                                                        ]
+                                         }
+                               }
+                     }
+}

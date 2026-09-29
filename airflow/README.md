@@ -1,8 +1,8 @@
 # Airflow Stack — Local Docker
 
 Local Apache Airflow stack for the retail-demand-forecasting pipeline. The
-DAG `m5_daily_extract` wraps `scripts/extract_azure_to_snowflake.py` and
-runs it once per day (incremental mode) on a schedule.
+DAG `m5_daily_extract` wraps `scripts/extract_azure_to_snowflake.py` in
+incremental mode and is manual-trigger only (`schedule=None`).
 
 This README is a quick-start cheatsheet. Architecture details and design
 rationale live in `LEARNINGS.md` under the "Airflow" section.

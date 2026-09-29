@@ -1,0 +1,118 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "4000000000000000000c",
+    "position":  {
+                     "x":  30,
+                     "y":  560,
+                     "z":  40,
+                     "height":  190,
+                     "width":  900,
+                     "tabOrder":  40
+                 },
+    "visual":  {
+                   "visualType":  "pivotTable",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Rows":  {
+                                                                 "projections":  [
+                                                                                     {
+                                                                                         "field":  {
+                                                                                                       "Column":  {
+                                                                                                                      "Expression":  {
+                                                                                                                                         "SourceRef":  {
+                                                                                                                                                           "Entity":  "DIM_ITEM"
+                                                                                                                                                       }
+                                                                                                                                     },
+                                                                                                                      "Property":  "ITEM_ID"
+                                                                                                                  }
+                                                                                                   },
+                                                                                         "queryRef":  "DIM_ITEM.ITEM_ID",
+                                                                                         "nativeQueryRef":  "ITEM_ID"
+                                                                                     }
+                                                                                 ]
+                                                             },
+                                                    "Values":  {
+                                                                   "projections":  [
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Measure":  {
+                                                                                                                         "Expression":  {
+                                                                                                                                            "SourceRef":  {
+                                                                                                                                                              "Entity":  "_Measures"
+                                                                                                                                                          }
+                                                                                                                                        },
+                                                                                                                         "Property":  "Forecast Units"
+                                                                                                                     }
+                                                                                                     },
+                                                                                           "queryRef":  "_Measures.Forecast Units",
+                                                                                           "nativeQueryRef":  "Forecast Units",
+                                                                                           "displayName":  "Forecast Units"
+                                                                                       },
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Measure":  {
+                                                                                                                         "Expression":  {
+                                                                                                                                            "SourceRef":  {
+                                                                                                                                                              "Entity":  "_Measures"
+                                                                                                                                                          }
+                                                                                                                                        },
+                                                                                                                         "Property":  "Forecast Revenue"
+                                                                                                                     }
+                                                                                                     },
+                                                                                           "queryRef":  "_Measures.Forecast Revenue",
+                                                                                           "nativeQueryRef":  "Forecast Revenue",
+                                                                                           "displayName":  "Forecast Revenue"
+                                                                                       },
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Measure":  {
+                                                                                                                         "Expression":  {
+                                                                                                                                            "SourceRef":  {
+                                                                                                                                                              "Entity":  "_Measures"
+                                                                                                                                                          }
+                                                                                                                                        },
+                                                                                                                         "Property":  "Forecast Interval Width %"
+                                                                                                                     }
+                                                                                                     },
+                                                                                           "queryRef":  "_Measures.Forecast Interval Width %",
+                                                                                           "nativeQueryRef":  "Forecast Interval Width %",
+                                                                                           "displayName":  "Forecast Interval Width %"
+                                                                                       }
+                                                                                   ]
+                                                               }
+                                                }
+                             },
+                   "visualContainerObjects":  {
+                                                  "title":  {
+                                                                "properties":  {
+                                                                                   "text":  {
+                                                                                                "expr":  {
+                                                                                                             "Literal":  {
+                                                                                                                             "Value":  "\u0027Item-level forecast watchlist\u0027"
+                                                                                                                         }
+                                                                                                         }
+                                                                                            },
+                                                                                   "fontSize":  {
+                                                                                                    "expr":  {
+                                                                                                                 "Literal":  {
+                                                                                                                                 "Value":  "14D"
+                                                                                                                             }
+                                                                                                             }
+                                                                                                },
+                                                                                   "fontColor":  {
+                                                                                                     "solid":  {
+                                                                                                                   "color":  {
+                                                                                                                                 "expr":  {
+                                                                                                                                              "Literal":  {
+                                                                                                                                                              "Value":  "\u0027#E6EDF7\u0027"
+                                                                                                                                                          }
+                                                                                                                                          }
+                                                                                                                             }
+                                                                                                               }
+                                                                                                 }
+                                                                               }
+                                                            }
+                                              }
+               },
+    "drillFilterOtherVisuals":  true
+}

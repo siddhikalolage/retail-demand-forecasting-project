@@ -1,0 +1,68 @@
+table FACT_DAILY_SALES
+	isHidden
+	lineageTag: a5a14c92-a2ce-4fa1-b310-4d8bc6dff001
+
+	column ITEM_KEY
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: ITEM_KEY
+
+	column STORE_KEY
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: STORE_KEY
+
+	column DATE_KEY
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: DATE_KEY
+
+	column ITEM_ID
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: ITEM_ID
+
+	column STORE_ID
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: STORE_ID
+
+	column SALE_DATE
+		dataType: dateTime
+		formatString: Long Date
+		summarizeBy: none
+		sourceColumn: SALE_DATE
+
+	column UNITS_SOLD
+		dataType: int64
+		formatString: #,0
+		summarizeBy: sum
+		sourceColumn: UNITS_SOLD
+
+	column SELL_PRICE
+		dataType: double
+		formatString: $#,0.00;($#,0.00);$#,0.00
+		summarizeBy: none
+		sourceColumn: SELL_PRICE
+
+	column REVENUE_AMOUNT_USD
+		dataType: double
+		formatString: $#,0;($#,0);$#,0
+		summarizeBy: sum
+		sourceColumn: REVENUE_AMOUNT_USD
+
+	partition FACT_DAILY_SALES = m
+		mode: import
+		source =
+			let
+				Source = Snowflake.Databases(PBI_Snowflake_Account, PBI_Snowflake_Warehouse, [Role = PBI_Snowflake_Role, CreateNavigationProperties = false, Implementation = "2.0"]),
+				Database = Source{[Name = PBI_Snowflake_Database, Kind = "Database"]}[Data],
+				Warehouse = Database{[Name = "WAREHOUSE", Kind = "Schema"]}[Data],
+				Table = Warehouse{[Name = "FACT_DAILY_SALES", Kind = "Table"]}[Data]
+			in
+				Table

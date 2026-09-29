@@ -501,7 +501,7 @@ def reconcile_extract_vs_warehouse(**context) -> str:
     WITH extract_counts AS (
         SELECT
             COUNT(*) as raw_rows
-        FROM RAW.M5_SALES_TRAIN
+        FROM RAW.SALES_TRAIN
         WHERE sale_date = %s
     ),
     warehouse_counts AS (

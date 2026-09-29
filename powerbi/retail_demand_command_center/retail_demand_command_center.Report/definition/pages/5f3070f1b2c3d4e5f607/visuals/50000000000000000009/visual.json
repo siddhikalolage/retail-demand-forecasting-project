@@ -1,0 +1,131 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "50000000000000000009",
+    "position":  {
+                     "x":  30,
+                     "y":  235,
+                     "z":  30,
+                     "height":  300,
+                     "width":  670,
+                     "tabOrder":  30
+                 },
+    "visual":  {
+                   "visualType":  "lineChart",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Category":  {
+                                                                     "projections":  [
+                                                                                         {
+                                                                                             "field":  {
+                                                                                                           "Column":  {
+                                                                                                                          "Expression":  {
+                                                                                                                                             "SourceRef":  {
+                                                                                                                                                               "Entity":  "DIM_CALENDAR"
+                                                                                                                                                           }
+                                                                                                                                         },
+                                                                                                                          "Property":  "CALENDAR_DATE"
+                                                                                                                      }
+                                                                                                       },
+                                                                                             "queryRef":  "DIM_CALENDAR.CALENDAR_DATE",
+                                                                                             "nativeQueryRef":  "CALENDAR_DATE"
+                                                                                         }
+                                                                                     ]
+                                                                 },
+                                                    "Y":  {
+                                                              "projections":  [
+                                                                                  {
+                                                                                      "field":  {
+                                                                                                    "Measure":  {
+                                                                                                                    "Expression":  {
+                                                                                                                                       "SourceRef":  {
+                                                                                                                                                         "Entity":  "_Measures"
+                                                                                                                                                     }
+                                                                                                                                   },
+                                                                                                                    "Property":  "Total Revenue"
+                                                                                                                }
+                                                                                                },
+                                                                                      "queryRef":  "_Measures.Total Revenue",
+                                                                                      "nativeQueryRef":  "Total Revenue",
+                                                                                      "displayName":  "Total Revenue"
+                                                                                  },
+                                                                                  {
+                                                                                      "field":  {
+                                                                                                    "Measure":  {
+                                                                                                                    "Expression":  {
+                                                                                                                                       "SourceRef":  {
+                                                                                                                                                         "Entity":  "_Measures"
+                                                                                                                                                     }
+                                                                                                                                   },
+                                                                                                                    "Property":  "Revenue 30D Average"
+                                                                                                                }
+                                                                                                },
+                                                                                      "queryRef":  "_Measures.Revenue 30D Average",
+                                                                                      "nativeQueryRef":  "Revenue 30D Average",
+                                                                                      "displayName":  "Revenue 30D Average"
+                                                                                  }
+                                                                              ]
+                                                          }
+                                                }
+                             },
+                   "visualContainerObjects":  {
+                                                  "title":  {
+                                                                "properties":  {
+                                                                                   "text":  {
+                                                                                                "expr":  {
+                                                                                                             "Literal":  {
+                                                                                                                             "Value":  "\u0027Signal validation: revenue versus baseline\u0027"
+                                                                                                                         }
+                                                                                                         }
+                                                                                            },
+                                                                                   "fontSize":  {
+                                                                                                    "expr":  {
+                                                                                                                 "Literal":  {
+                                                                                                                                 "Value":  "14D"
+                                                                                                                             }
+                                                                                                             }
+                                                                                                },
+                                                                                   "fontColor":  {
+                                                                                                     "solid":  {
+                                                                                                                   "color":  {
+                                                                                                                                 "expr":  {
+                                                                                                                                              "Literal":  {
+                                                                                                                                                              "Value":  "\u0027#E6EDF7\u0027"
+                                                                                                                                                          }
+                                                                                                                                          }
+                                                                                                                             }
+                                                                                                               }
+                                                                                                 }
+                                                                               }
+                                                            }
+                                              },
+                   "objects":  {
+                                   "legend":  [
+                                                  {
+                                                      "properties":  {
+                                                                         "show":  {
+                                                                                      "expr":  {
+                                                                                                   "Literal":  {
+                                                                                                                   "Value":  "true"
+                                                                                                               }
+                                                                                               }
+                                                                                  }
+                                                                     }
+                                                  }
+                                              ],
+                                   "valueAxis":  [
+                                                     {
+                                                         "properties":  {
+                                                                            "show":  {
+                                                                                         "expr":  {
+                                                                                                      "Literal":  {
+                                                                                                                      "Value":  "true"
+                                                                                                                  }
+                                                                                                  }
+                                                                                     }
+                                                                        }
+                                                     }
+                                                 ]
+                               }
+               },
+    "drillFilterOtherVisuals":  true
+}

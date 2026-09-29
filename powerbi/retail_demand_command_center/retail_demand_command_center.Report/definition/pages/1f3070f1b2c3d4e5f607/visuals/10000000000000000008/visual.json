@@ -1,0 +1,85 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "10000000000000000008",
+    "position":  {
+                     "x":  705,
+                     "y":  100,
+                     "z":  23,
+                     "height":  105,
+                     "width":  210,
+                     "tabOrder":  23
+                 },
+    "visual":  {
+                   "visualType":  "cardVisual",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Data":  {
+                                                                 "projections":  [
+                                                                                     {
+                                                                                         "field":  {
+                                                                                                       "Measure":  {
+                                                                                                                       "Expression":  {
+                                                                                                                                          "SourceRef":  {
+                                                                                                                                                            "Entity":  "_Measures"
+                                                                                                                                                        }
+                                                                                                                                      },
+                                                                                                                       "Property":  "Avg Selling Price"
+                                                                                                                   }
+                                                                                                   },
+                                                                                         "queryRef":  "_Measures.Avg Selling Price",
+                                                                                         "nativeQueryRef":  "Avg Selling Price",
+                                                                                         "displayName":  "Avg Selling Price"
+                                                                                     }
+                                                                                 ]
+                                                             }
+                                                }
+                             },
+                   "visualContainerObjects":  {
+                                                  "title":  {
+                                                                "properties":  {
+                                                                                   "text":  {
+                                                                                                "expr":  {
+                                                                                                             "Literal":  {
+                                                                                                                             "Value":  "\u0027Avg Selling Price\u0027"
+                                                                                                                         }
+                                                                                                         }
+                                                                                            },
+                                                                                   "fontSize":  {
+                                                                                                    "expr":  {
+                                                                                                                 "Literal":  {
+                                                                                                                                 "Value":  "12D"
+                                                                                                                             }
+                                                                                                             }
+                                                                                                },
+                                                                                   "fontColor":  {
+                                                                                                     "solid":  {
+                                                                                                                   "color":  {
+                                                                                                                                 "expr":  {
+                                                                                                                                              "Literal":  {
+                                                                                                                                                              "Value":  "\u0027#E6EDF7\u0027"
+                                                                                                                                                          }
+                                                                                                                                          }
+                                                                                                                             }
+                                                                                                               }
+                                                                                                 }
+                                                                               }
+                                                            }
+                                              },
+                   "objects":  {
+                                   "categoryLabels":  [
+                                                          {
+                                                              "properties":  {
+                                                                                 "show":  {
+                                                                                              "expr":  {
+                                                                                                           "Literal":  {
+                                                                                                                           "Value":  "true"
+                                                                                                                       }
+                                                                                                       }
+                                                                                          }
+                                                                             }
+                                                          }
+                                                      ]
+                               }
+               },
+    "drillFilterOtherVisuals":  true
+}

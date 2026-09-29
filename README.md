@@ -1,185 +1,91 @@
-# retail-demand-forecasting-project
+# Retail Demand Forecasting
 
-> A cloud-native retail demand-planning and forecasting platform. Walmart M5 historical
-> sales data ingested from Azure SQL Database into Snowflake via orchestrated Airflow DAGs,
-> transformed through a Kimball star schema with dedicated analytical marts in dbt,
-> forecast with Snowflake Cortex machine learning, and surfaced as a five-page Power BI
-> dashboard for supply chain planning and operational decision-making.
+An end-to-end retail demand-planning project: Azure SQL source data is loaded
+into Snowflake RAW, transformed with dbt into a Kimball-style warehouse and
+decision marts, forecast with Snowflake Cortex, and explored through a
+five-page Power BI command center.
 
-**Status: COMPLETE — 2026-05-22.** End-to-end and interview-ready: Azure SQL Database → Snowflake `RAW` → dbt `STAGING` / `INTERMEDIATE` / `WAREHOUSE` / `MARTS` → Snowflake Cortex ML forecast → five-page Power BI dashboard, orchestrated on an Apache Airflow (Docker) DAG with per-model lineage via Astronomer Cosmos. Full Kimball star schema (incremental `fact_daily_sales` at 32.9M rows / $100.7M revenue), two pre-aggregated marts, a 28-day Cortex forecast for ~3K items conformed into the warehouse star and UNIONed with actuals, plus GitHub Actions CI (`dbt parse` + `sqlfluff` + `ruff` F821). Full build history, design decisions and the lessons log live in `PROJECT_CONTEXT.md` and `LEARNINGS.md`.
+## What it answers
 
-## What this project demonstrates
-
-- **End-to-end pipeline** from an operational source database (Azure SQL) to a BI dashboard
-- **Cloud warehouse** (Snowflake) fed from a **cloud-hosted OLTP source** (Azure SQL Database) — the realistic enterprise pattern of a relational ERP / Microsoft Dynamics-style source → cloud warehouse → BI tool
-- **Orchestrated execution** via Apache Airflow (Docker), with independent Snowflake-side verification tasks that catch silent failures inside the DAG
-- **Per-model dbt lineage in Airflow** via Astronomer Cosmos — Cosmos parses the dbt project at DAG-parse time and generates one Airflow task per dbt model and per test, so the Graph view shows the dbt DAG directly and a failing model surfaces as a single red task linked to its dbt logs
-- **Production-grade dbt** with `dbt_utils`, tests, packages, partitioned incremental fact models, and a lean marts layer (pre-aggregations where they earn their keep; the warehouse star otherwise exposed directly to BI)
-- **Kimball star schema at scale, by design** — deliberately dimensional modelling using the time-tested Kimball approach for star-schema analytics; the M5 dataset (~58M daily-sales rows across 30,000 SKUs and 10 stores) makes partitioning, incremental loads and pre-aggregated marts genuinely necessary rather than ceremonial
-- **Time-series forecasting layer** — a Snowflake Cortex 28-day forecast conformed into the warehouse star (`fact_forecast_daily`) and joined to actuals via a dedicated `mart_forecast_vs_actual` model, surfacing the headline business question on the dashboard ("how is reality tracking against the forecast?") with full lineage back through the pipeline
-- **Five-page Power BI dashboard** — Executive Overview, Demand by Hierarchy, Promotion & Price, Seasonality & Calendar, Forecast vs Actual
-- **GitHub Actions CI** — `dbt parse` + `sqlfluff` lint + `ruff` F821 Python lint on every push and PR (`dbt test` deliberately run locally to avoid burning pay-as-you-go Snowflake credits)
+- Where are revenue and unit demand concentrated, growing, or softening?
+- Are price, event, weekday/weekend, or SNAP signals associated with the shift?
+- Which future forecasts need conservative replenishment because their 95%
+  planning interval is wide?
+- What operational action should be reviewed next?
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    K["Kaggle M5<br/>Public Dataset"]
-    MS[("Azure SQL Database<br/>OLTP Source")]
-    AF["Apache Airflow<br/>Docker"]
-    SF[("Snowflake<br/>Cloud Warehouse")]
-    DBT["dbt<br/>Transformations"]
-    CTX["Snowflake Cortex<br/>ML Forecast"]
-    PBI["Power BI<br/>5-Page Dashboard"]
-    GH["GitHub Actions<br/>CI/CD"]
-
-    K -->|Initial load| MS
-    MS -->|Daily extract| AF
-    AF -->|COPY INTO| SF
-    SF <-->|Staging &rarr; Warehouse &rarr; Marts| DBT
-    DBT -->|int_forecast_input| CTX
-    CTX -->|fact_forecast_daily| SF
-    SF -->|Native connector| PBI
-    GH -.->|parse / lint| DBT
+```text
+M5 CSVs -> Azure SQL raw -> Snowflake RAW -> dbt STAGING / INTERMEDIATE
+       -> WAREHOUSE facts and dimensions -> MARTS -> Power BI command center
+                                             -> Snowflake Cortex forecast
 ```
 
-## Stack
+## Power BI command center
 
-| Layer | Choice |
-|---|---|
-| Source database | Azure SQL Database (Serverless General Purpose, auto-pause) |
-| Dataset | M5 Forecasting (Kaggle public dataset — Walmart sales 2011–2016) |
-| Orchestration | Apache Airflow (Docker, LocalExecutor) |
-| Cloud warehouse | Snowflake |
-| Transformation | dbt (`dbt-snowflake`, `dbt_utils`) |
-| Forecasting | Snowflake Cortex ML (`FORECAST`) |
-| BI | Power BI Desktop (Import mode) |
-| Version control | Git + GitHub |
-| CI/CD | GitHub Actions (`dbt parse`, `sqlfluff`, `ruff` F821) |
+The canonical, editable report source is
+[`powerbi/retail_demand_command_center/retail_demand_command_center.pbip`](powerbi/retail_demand_command_center/retail_demand_command_center.pbip).
+It replaces the legacy PBIX/PBIP copies and is intentionally source-controlled
+as a PBIP project rather than a large binary export.
 
-## Project structure
+The five report pages are:
 
-```
-retail-demand-forecasting-project/
-├── scripts/                # Python: M5 load, Azure→Snowflake extract, smoke tests
-│   ├── load_m5_to_azure_sql.py     # Kaggle M5 download → Azure SQL source tables
-│   ├── create_raw_tables.py        # Snowflake RAW table DDL runner
-│   ├── extract_azure_to_snowflake.py  # incremental Azure SQL → Snowflake RAW (COPY INTO)
-│   └── smoke_test_*.py             # Azure SQL + Snowflake connectivity checks
-├── airflow/                # Local Airflow stack (Docker)
-│   ├── Dockerfile          # apache/airflow 2.10.3 + MS ODBC 17 + project deps
-│   ├── docker-compose.yml  # postgres + init + webserver + scheduler (LocalExecutor)
-│   └── dags/m5_daily_extract.py    # extract → verify → dbt (Cosmos) → verify
-├── dbt/                    # dbt-snowflake project
-│   ├── models/
-│   │   ├── staging/        # stg_* (RAW → typed views)
-│   │   ├── intermediate/   # int_sales_with_prices, int_forecast_input
-│   │   ├── warehouse/      # Kimball star: dim_calendar / dim_item / dim_store,
-│   │   │                   #   incremental fact_daily_sales, fact_forecast_daily
-│   │   └── marts/          # agg_sales_daily, agg_sales_daily_item_cat,
-│   │                       #   mart_forecast_vs_actual
-│   ├── macros/             # generate_schema_name override
-│   └── dbt_project.yml / profiles.yml / packages.yml
-├── sql/                    # provisioning + verification query packs
-│   ├── ddl/                # Azure SQL raw-table DDL
-│   ├── snowflake/          # 00 provision → 05 train Cortex forecast model
-│   └── verify/             # per-phase verification queries
-├── powerbi/                # retail_demand_forecasting.pbix + .vpax + screenshots/
-├── .github/workflows/      # dbt-ci.yml (parse + sqlfluff), lint-python.yml (ruff F821)
-└── *.md                    # PROJECT_PLAN, PROJECT_CONTEXT, *_PIPELINE walkthroughs, LEARNINGS
+1. Executive Pulse - headline revenue, units, selling price, trend, and forecast risk.
+2. Demand Intelligence - category, department, and store concentration plus demand signals.
+3. Price & Calendar Drivers - price movement, events, weekday/weekend, and SNAP context.
+4. Forecast Control Tower - future demand, 95% planning range, item watchlist, and action trigger.
+5. Action & Risk Center - concise operating actions and validation guardrails.
+
+The report separates historical actuals from future forecasts. A future forecast
+does not have an observed actual yet; forecast quality must be evaluated through
+the historical backtest marts, not by claiming that a future prediction has
+already been validated.
+
+### Open and refresh the report
+
+1. Build the dbt models, including `fact_daily_sales`, `fact_forecast_daily`, and `mart_forecast_vs_actual`.
+2. In Power BI Desktop, open the PBIP file above.
+3. In the semantic model, set the four expressions in `definition/expressions.tmdl` for your Snowflake account, warehouse, role, and database. The default role is `POWERBI_READER`; no account endpoint or credentials are committed.
+4. Refresh and confirm that the Snowflake reader role has the grants in `sql/snowflake/04_grant_powerbi_reader.sql`.
+
+To regenerate the report-definition JSON from the documented layout, run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\powerbi\build_command_center.ps1
 ```
 
-## Implementation approach
+This does not connect to Snowflake or write data; it only recreates the report
+definition from the source layout.
 
-This project was built with the following principles:
+## Local setup
 
-- **Intentional design** — every component serves a clear purpose; no gold-plating or
-  over-engineering for its own sake.
-- **Transparent decisions** — why this technology, why this pattern? Documented in
-  `PROJECT_CONTEXT.md` and `LEARNINGS.md`.
-- **Production patterns** — the architecture mirrors real enterprise data platforms,
-  scaled to a single-developer portfolio scope.
-- **Complete testing** — end-to-end smoke tests, dbt tests, SQL validation, and CI checks
-  ensure the pipeline is reproducible and robust.
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+dbt deps --project-dir dbt
+dbt build --project-dir dbt --profiles-dir dbt
+python scripts\profile_data.py --output logs\data_profile.json
+```
 
-## Project documents
+Create a local `.env` from `.env.example` before using Azure SQL, Snowflake, or
+the profiling script. Secrets and Power BI local cache files are ignored.
 
-- `PROJECT_PLAN.md` — locked stack, scope, phase delivery plan, risks
-- `PROJECT_CONTEXT.md` — running session state + full build history
-- `EXTRACT_PIPELINE.md` / `DBT_PIPELINE.md` / `POWERBI_PIPELINE.md` — layer-by-layer walkthroughs
-- `CODE_QUALITY.md` — the 10-point per-script code-quality checklist applied across the repo
-- `POWERBI_PLAYBOOK.md` — Power BI build playbook (storage modes, measures, page polish)
-- `GLOSSARY.md` — project terminology
-- `LEARNING_ROADMAP.md` — feature roadmap and phased development milestones
-- `LEARNINGS.md` — diagnosis → fix → lesson loops across SQL, Snowflake, Python, dbt, Airflow, Power BI and CI
-- `BUSINESS_INSIGHTS.md` — analytical findings, KPI definitions, and business recommendations
+## Quality controls
 
-## Dashboard
+- dbt source, schema, grain, reconciliation, and freshness tests.
+- Read-only profiling in `scripts/profile_data.py` and `sql/profile/` using the
+  current `RETAIL_DB` table names.
+- Re-runnable mart verification in `sql/verify/09_phase4_agg_sales_daily_verification.sql`.
+- Forecast intervals used as operational uncertainty ranges, not as future
+  accuracy claims.
 
-Five interactive pages built in Power BI Desktop on the dbt marts in Snowflake.
-Import storage mode — the `.pbix` file opens standalone for reviewers, no Snowflake
-connection required (all data baked into the file). Location: `powerbi/retail_demand_forecasting.pbix`.
+## Project map
 
-**Forecast accuracy note:** The Cortex forecasts shown on the "Forecast vs Actual" page
-are 28-day rolling predictions conformed to the warehouse schema and evaluated against
-the actual M5 sales data. See `BUSINESS_INSIGHTS.md` for forecast performance metrics
-by product category and segment.
-
-### Executive Overview
-
-![Executive Overview](powerbi/screenshots/executive_overview.png)
-
-Top-of-funnel KPIs across the M5 dataset (Revenue, Units Sold, Stores, SKUs) plus
-a daily revenue trend with a dashed 30-day moving-average overlay. The landing
-page — headline numbers and the long-term shape of the business in one glance.
-
-### Demand by Hierarchy
-
-![Demand by Hierarchy](powerbi/screenshots/demand_by_hierarchy.png)
-
-Revenue cuts across the category → department → item hierarchy. The bar charts set
-the FOODS / HOUSEHOLD / HOBBIES split (FOODS dominates at $60M / 59% of revenue);
-the matrix drills into department-level share; the Top 10 Items table confirms the
-classic retail long-tail — even the top 10 SKUs concentrate only ~5.7% of total
-revenue.
-
-### Promotion & Price
-
-![Promotion & Price](powerbi/screenshots/promotion_and_price.png)
-
-Price-elasticity and SNAP-day story. Average selling price by category (HOUSEHOLD
-highest, FOODS lowest); the donut shows SNAP-benefit days drive 52% of revenue from
-~33% of calendar days; the scatter exposes FOODS_3 as the cheap-price / high-volume
-outlier — classic price-elasticity in one chart.
-
-### Seasonality & Calendar
-
-![Seasonality & Calendar](powerbi/screenshots/seasonality_and_calendar.png)
-
-Calendar effects on demand. Weekday vs Weekend bars show weekend revenue
-over-indexes ~33% per day; the Holiday Events bar surfaces SuperBowl as the
-strongest single-day uplift; the Year × Month heatmap (green sequential gradient)
-makes year-on-year revenue growth legible across the 2011-2014 history (~50% lift
-from 2011 to 2013).
-
-### Forecast vs Actual
-
-![Forecast vs Actual](powerbi/screenshots/forecast_vs_actual.png)
-
-Where the project's ML layer lands in the dashboard. Forecast Revenue and Forecast
-Units KPI cards top-right; the Revenue and Units line charts show actuals (solid
-green) plus dbt-produced Cortex forecasts (dashed red), with 95% confidence
-intervals (dotted) on the Units chart; the matrix at the bottom splits actual vs
-forecast by category.
-
-## Building this project
-
-This project demonstrates a complete, production-grade data platform for retail analytics and forecasting.
-It is designed to be:
-
-- **End-to-end and self-contained** — every component integrated and tested together
-- **Interview-ready** — architecture, decisions, and learnings documented transparently
-- **Extensible** — patterns and structure support both immediate use and future platform growth
-
-Full design decisions, technical walkthroughs, and lessons learned are documented in the project files:
-`PROJECT_CONTEXT.md`, `LEARNINGS.md`, and the layer-specific `*_PIPELINE.md` guides.
+| Path | Purpose |
+| --- | --- |
+| `scripts/` | Azure/Snowflake load, smoke-test, and profile utilities. |
+| `sql/` | Provisioning, source DDL, profile packs, and verification queries. |
+| `dbt/` | Transformations, tests, and model documentation. |
+| `airflow/` | Local manual-trigger Airflow orchestration. |
+| `powerbi/` | The PBIP command center and its reproducible report builder. |

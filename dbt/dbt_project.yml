@@ -1,9 +1,8 @@
 # =============================================================================
 # dbt_project.yml — Retail Demand & Forecasting
 # =============================================================================
-# Master config for the dbt project. See DBT_PIPELINE.md at project root for
-# the full walkthrough of how this connects to Snowflake and what each layer
-# does in the transformation pipeline.
+# Master config for Retail Demand & Forecasting. See README.md and the model
+# files for the current layer definitions and local build workflow.
 # =============================================================================
 
 name: "retail_demand_forecasting"

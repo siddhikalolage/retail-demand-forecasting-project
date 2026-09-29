@@ -1,0 +1,49 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "5000000000000000000b",
+    "position":  {
+                     "x":  30,
+                     "y":  570,
+                     "z":  40,
+                     "height":  180,
+                     "width":  430,
+                     "tabOrder":  40
+                 },
+    "visual":  {
+                   "visualType":  "textbox",
+                   "objects":  {
+                                   "general":  [
+                                                   {
+                                                       "properties":  {
+                                                                          "paragraphs":  [
+                                                                                             {
+                                                                                                 "textRuns":  [
+                                                                                                                  {
+                                                                                                                      "value":  "1. Protect availability",
+                                                                                                                      "textStyle":  {
+                                                                                                                                        "fontWeight":  "bold",
+                                                                                                                                        "fontSize":  "15pt",
+                                                                                                                                        "color":  "#F7FAFC"
+                                                                                                                                    }
+                                                                                                                  }
+                                                                                                              ]
+                                                                                             },
+                                                                                             {
+                                                                                                 "textRuns":  [
+                                                                                                                  {
+                                                                                                                      "value":  "High forecast uncertainty: increase replenishment cadence, retain flexible capacity and avoid committing scarce stock to low-confidence demand.",
+                                                                                                                      "textStyle":  {
+                                                                                                                                        "fontSize":  "10pt",
+                                                                                                                                        "color":  "#A9B8CC"
+                                                                                                                                    }
+                                                                                                                  }
+                                                                                                              ]
+                                                                                             }
+                                                                                         ]
+                                                                      }
+                                                   }
+                                               ]
+                               }
+               },
+    "drillFilterOtherVisuals":  true
+}

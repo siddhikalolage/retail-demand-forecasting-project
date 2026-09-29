@@ -1,0 +1,49 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "1000000000000000000e",
+    "position":  {
+                     "x":  705,
+                     "y":  570,
+                     "z":  41,
+                     "height":  165,
+                     "width":  705,
+                     "tabOrder":  41
+                 },
+    "visual":  {
+                   "visualType":  "textbox",
+                   "objects":  {
+                                   "general":  [
+                                                   {
+                                                       "properties":  {
+                                                                          "paragraphs":  [
+                                                                                             {
+                                                                                                 "textRuns":  [
+                                                                                                                  {
+                                                                                                                      "value":  "Risk guardrail",
+                                                                                                                      "textStyle":  {
+                                                                                                                                        "fontWeight":  "bold",
+                                                                                                                                        "fontSize":  "16pt",
+                                                                                                                                        "color":  "#F7FAFC"
+                                                                                                                                    }
+                                                                                                                  }
+                                                                                                              ]
+                                                                                             },
+                                                                                             {
+                                                                                                 "textRuns":  [
+                                                                                                                  {
+                                                                                                                      "value":  "Forecast risk is derived from the 95% interval width. Use it to scale safety stock and review cadence, not as a measure of future forecast accuracy.",
+                                                                                                                      "textStyle":  {
+                                                                                                                                        "fontSize":  "10pt",
+                                                                                                                                        "color":  "#A9B8CC"
+                                                                                                                                    }
+                                                                                                                  }
+                                                                                                              ]
+                                                                                             }
+                                                                                         ]
+                                                                      }
+                                                   }
+                                               ]
+                               }
+               },
+    "drillFilterOtherVisuals":  true
+}

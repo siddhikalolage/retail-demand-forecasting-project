@@ -2,7 +2,7 @@
 -- Store dimension. One row per distinct M5 store (~10 rows).
 -- Surrogate store_key via dbt_utils.generate_surrogate_key on store_id.
 -- state_id comes straight from staging — no string parsing.
--- See DBT_PIPELINE.md for the full walkthrough.
+-- See README.md for the local build workflow.
 
 WITH source AS (
     SELECT DISTINCT

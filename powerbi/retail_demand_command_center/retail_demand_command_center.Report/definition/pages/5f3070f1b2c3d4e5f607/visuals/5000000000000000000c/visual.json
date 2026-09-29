@@ -1,0 +1,49 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "5000000000000000000c",
+    "position":  {
+                     "x":  490,
+                     "y":  570,
+                     "z":  41,
+                     "height":  180,
+                     "width":  430,
+                     "tabOrder":  41
+                 },
+    "visual":  {
+                   "visualType":  "textbox",
+                   "objects":  {
+                                   "general":  [
+                                                   {
+                                                       "properties":  {
+                                                                          "paragraphs":  [
+                                                                                             {
+                                                                                                 "textRuns":  [
+                                                                                                                  {
+                                                                                                                      "value":  "2. Diagnose deviation",
+                                                                                                                      "textStyle":  {
+                                                                                                                                        "fontWeight":  "bold",
+                                                                                                                                        "fontSize":  "15pt",
+                                                                                                                                        "color":  "#F7FAFC"
+                                                                                                                                    }
+                                                                                                                  }
+                                                                                                              ]
+                                                                                             },
+                                                                                             {
+                                                                                                 "textRuns":  [
+                                                                                                                  {
+                                                                                                                      "value":  "Below-baseline demand: inspect price movement, calendar effects and store mix. Do not use a blanket promotion before isolating the driver.",
+                                                                                                                      "textStyle":  {
+                                                                                                                                        "fontSize":  "10pt",
+                                                                                                                                        "color":  "#A9B8CC"
+                                                                                                                                    }
+                                                                                                                  }
+                                                                                                              ]
+                                                                                             }
+                                                                                         ]
+                                                                      }
+                                                   }
+                                               ]
+                               }
+               },
+    "drillFilterOtherVisuals":  true
+}

@@ -203,7 +203,7 @@ Every project component should have accompanying documentation:
 3. Add visual to appropriate Power BI page
 4. Verify measure logic in formula bar; cross-check against mart query
 5. Test visual with slicers; ensure cross-page filters work
-6. Document in `POWERBI_PIPELINE.md` §[relevant section]
+6. Update `README.md`, `BUSINESS_INSIGHTS.md`, or the PBIP source documentation as relevant.
 
 ---
 
@@ -243,7 +243,7 @@ If a Power BI measure is wrong:
 1. Open Power BI Desktop; verify DAX formula in formula bar
 2. Check mart query output in Snowflake directly
 3. Refresh semantic model in Power BI (Ctrl+Shift+R)
-4. Verify measure logic against POWERBI_PIPELINE.md documentation
+4. Verify measure logic against `BUSINESS_INSIGHTS.md` and the PBIP model definition.
 5. If necessary, roll back .pbix from git history and re-apply changes
 
 ---

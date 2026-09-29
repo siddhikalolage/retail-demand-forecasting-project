@@ -1,0 +1,19 @@
+relationship FactSales_Item
+	fromColumn: FACT_DAILY_SALES.ITEM_KEY
+	toColumn: DIM_ITEM.ITEM_KEY
+
+relationship FactSales_Store
+	fromColumn: FACT_DAILY_SALES.STORE_KEY
+	toColumn: DIM_STORE.STORE_KEY
+
+relationship FactSales_Date
+	fromColumn: FACT_DAILY_SALES.DATE_KEY
+	toColumn: DIM_CALENDAR.DATE_KEY
+
+relationship MartForecastActual_Item
+	fromColumn: MART_FORECAST_VS_ACTUAL.ITEM_KEY
+	toColumn: DIM_ITEM.ITEM_KEY
+
+relationship MartForecastActual_Date
+	fromColumn: MART_FORECAST_VS_ACTUAL.DATE_KEY
+	toColumn: DIM_CALENDAR.DATE_KEY

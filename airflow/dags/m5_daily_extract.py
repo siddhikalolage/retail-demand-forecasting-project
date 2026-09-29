@@ -77,7 +77,7 @@ DEFAULT_ARGS = {
 
 
 # -----------------------------------------------------------------------------
-# Cosmos config -- see DBT_PIPELINE.md "Airflow orchestration" for the
+# Cosmos config -- see README.md for the local project workflow and the
 # full walkthrough.
 # -----------------------------------------------------------------------------
 # Paths inside the worker container. DBT_PROJECT_PATH is the read-only mount
@@ -283,12 +283,10 @@ def m5_daily_extract():
             WAREHOUSE:    dim_calendar (>0), dim_item (>0), dim_store (>0),
                           fact_daily_sales (>0 for run_date)
 
-        Mart-layer check removed 2026-05-20 (Phase 5.4) — the legacy
-        `MART_EXECUTIVE_OVERVIEW` was renamed to `AGG_SALES_DAILY` (with a
-        surrogate `date_key`, not `sale_date`) in Phase 5.3. The fact check
-        above already validates that dbt's incremental MERGE landed the day's
-        data; downstream mart/agg layer derives from fact, so a separate
-        per-run mart check is redundant.
+        The daily aggregate is derived from the fact and uses a surrogate date
+        key. The fact check above already validates that dbt's incremental
+        MERGE landed the day's data, so a separate per-run aggregate check is
+        redundant.
 
         Any failure -> RuntimeError -> task failure -> red square in Grid view.
         """

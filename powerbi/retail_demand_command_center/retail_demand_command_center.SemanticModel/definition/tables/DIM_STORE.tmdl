@@ -1,0 +1,28 @@
+table DIM_STORE
+	lineageTag: 65f5f247-162d-4fa3-8817-7419120aa7a8
+
+	column STORE_KEY
+		dataType: string
+		summarizeBy: none
+		sourceColumn: STORE_KEY
+
+	column STORE_ID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: STORE_ID
+
+	column STATE_ID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: STATE_ID
+
+	partition DIM_STORE = m
+		mode: import
+		source =
+			let
+				Source = Snowflake.Databases(PBI_Snowflake_Account, PBI_Snowflake_Warehouse, [Role = PBI_Snowflake_Role, CreateNavigationProperties = false, Implementation = "2.0"]),
+				Database = Source{[Name = PBI_Snowflake_Database, Kind = "Database"]}[Data],
+				Warehouse = Database{[Name = "WAREHOUSE", Kind = "Schema"]}[Data],
+				Table = Warehouse{[Name = "DIM_STORE", Kind = "Table"]}[Data]
+			in
+				Table

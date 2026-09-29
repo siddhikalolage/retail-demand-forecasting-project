@@ -1,0 +1,49 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "20000000000000000001",
+    "position":  {
+                     "x":  30,
+                     "y":  18,
+                     "z":  10,
+                     "height":  60,
+                     "width":  900,
+                     "tabOrder":  10
+                 },
+    "visual":  {
+                   "visualType":  "textbox",
+                   "objects":  {
+                                   "general":  [
+                                                   {
+                                                       "properties":  {
+                                                                          "paragraphs":  [
+                                                                                             {
+                                                                                                 "textRuns":  [
+                                                                                                                  {
+                                                                                                                      "value":  "Demand Intelligence",
+                                                                                                                      "textStyle":  {
+                                                                                                                                        "fontWeight":  "bold",
+                                                                                                                                        "fontSize":  "26pt",
+                                                                                                                                        "color":  "#F7FAFC"
+                                                                                                                                    }
+                                                                                                                  }
+                                                                                                              ]
+                                                                                             },
+                                                                                             {
+                                                                                                 "textRuns":  [
+                                                                                                                  {
+                                                                                                                      "value":  "Where demand is concentrated, accelerating, and exposed to concentration risk",
+                                                                                                                      "textStyle":  {
+                                                                                                                                        "fontSize":  "10pt",
+                                                                                                                                        "color":  "#A9B8CC"
+                                                                                                                                    }
+                                                                                                                  }
+                                                                                                              ]
+                                                                                             }
+                                                                                         ]
+                                                                      }
+                                                   }
+                                               ]
+                               }
+               },
+    "drillFilterOtherVisuals":  true
+}

@@ -4,11 +4,9 @@
 -- (RETAIL_DB.INTERMEDIATE.FORECAST_RAW_OUTPUT, created by 05_train_forecast_model.sql).
 -- Conforms surrogate keys to the warehouse star.
 --
--- Note on date_key: forecast dates are FUTURE relative to fact_daily_sales
--- (2014-03-23 onwards). dim_calendar currently ends 2014-03-22, so date_key
--- on this fact will NOT have matches in dim_calendar. The relationships test
--- on date_key is intentionally skipped. To enable BI-side date slicing, extend
--- dim_calendar to cover the forecast horizon (deferred — known follow-up).
+-- Forecast dates are future relative to fact_daily_sales. DIM_CALENDAR extends
+-- beyond the latest historical M5 day to cover that forecast horizon, so the
+-- date_key relationship enables Power BI date filtering for both series.
 
 {{ config(
     materialized='table'

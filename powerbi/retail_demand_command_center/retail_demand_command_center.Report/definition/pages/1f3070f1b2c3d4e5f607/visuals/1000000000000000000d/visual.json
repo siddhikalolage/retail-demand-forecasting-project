@@ -1,0 +1,49 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "1000000000000000000d",
+    "position":  {
+                     "x":  30,
+                     "y":  570,
+                     "z":  40,
+                     "height":  165,
+                     "width":  650,
+                     "tabOrder":  40
+                 },
+    "visual":  {
+                   "visualType":  "textbox",
+                   "objects":  {
+                                   "general":  [
+                                                   {
+                                                       "properties":  {
+                                                                          "paragraphs":  [
+                                                                                             {
+                                                                                                 "textRuns":  [
+                                                                                                                  {
+                                                                                                                      "value":  "Decision signal",
+                                                                                                                      "textStyle":  {
+                                                                                                                                        "fontWeight":  "bold",
+                                                                                                                                        "fontSize":  "16pt",
+                                                                                                                                        "color":  "#F7FAFC"
+                                                                                                                                    }
+                                                                                                                  }
+                                                                                                              ]
+                                                                                             },
+                                                                                             {
+                                                                                                 "textRuns":  [
+                                                                                                                  {
+                                                                                                                      "value":  "Read the trend against its 30-day baseline. Sustained downside movement calls for a category and store drill-down; isolated spikes should be checked against calendar events before changing inventory.",
+                                                                                                                      "textStyle":  {
+                                                                                                                                        "fontSize":  "10pt",
+                                                                                                                                        "color":  "#A9B8CC"
+                                                                                                                                    }
+                                                                                                                  }
+                                                                                                              ]
+                                                                                             }
+                                                                                         ]
+                                                                      }
+                                                   }
+                                               ]
+                               }
+               },
+    "drillFilterOtherVisuals":  true
+}

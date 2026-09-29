@@ -1,8 +1,0 @@
-{
-    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
-    "name":  "ea35683db594e7bab88c",
-    "displayName":  "Demand by Hierarchy",
-    "displayOption":  "FitToPage",
-    "height":  720,
-    "width":  1280
-}

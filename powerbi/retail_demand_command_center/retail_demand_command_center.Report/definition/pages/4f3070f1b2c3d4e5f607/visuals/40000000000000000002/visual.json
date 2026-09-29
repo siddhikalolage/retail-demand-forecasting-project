@@ -1,0 +1,84 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "40000000000000000002",
+    "position":  {
+                     "x":  940,
+                     "y":  24,
+                     "z":  11,
+                     "height":  46,
+                     "width":  220,
+                     "tabOrder":  11
+                 },
+    "visual":  {
+                   "visualType":  "slicer",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Values":  {
+                                                                   "projections":  [
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Column":  {
+                                                                                                                        "Expression":  {
+                                                                                                                                           "SourceRef":  {
+                                                                                                                                                             "Entity":  "DIM_CALENDAR"
+                                                                                                                                                         }
+                                                                                                                                       },
+                                                                                                                        "Property":  "CALENDAR_DATE"
+                                                                                                                    }
+                                                                                                     },
+                                                                                           "queryRef":  "DIM_CALENDAR.CALENDAR_DATE",
+                                                                                           "nativeQueryRef":  "CALENDAR_DATE"
+                                                                                       }
+                                                                                   ]
+                                                               }
+                                                }
+                             },
+                   "objects":  {
+                                   "data":  [
+                                                {
+                                                    "properties":  {
+                                                                       "mode":  {
+                                                                                    "expr":  {
+                                                                                                 "Literal":  {
+                                                                                                                 "Value":  "\u0027Dropdown\u0027"
+                                                                                                             }
+                                                                                             }
+                                                                                }
+                                                                   }
+                                                }
+                                            ],
+                                   "general":  [
+                                                   {
+                                                       "properties":  {
+                                                                          "orientation":  {
+                                                                                              "expr":  {
+                                                                                                           "Literal":  {
+                                                                                                                           "Value":  "\u00271D\u0027"
+                                                                                                                       }
+                                                                                                       }
+                                                                                          }
+                                                                      }
+                                                   }
+                                               ],
+                                   "header":  [
+                                                  {
+                                                      "properties":  {
+                                                                         "text":  {
+                                                                                      "expr":  {
+                                                                                                   "Literal":  {
+                                                                                                                   "Value":  "\u0027Period\u0027"
+                                                                                                               }
+                                                                                               }
+                                                                                  }
+                                                                     }
+                                                  }
+                                              ]
+                               },
+                   "syncGroup":  {
+                                     "groupName":  "DIM_CALENDAR_CALENDAR_DATE",
+                                     "fieldChanges":  true,
+                                     "filterChanges":  true
+                                 }
+               },
+    "drillFilterOtherVisuals":  true
+}

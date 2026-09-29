@@ -1,0 +1,67 @@
+table MART_FORECAST_VS_ACTUAL
+	isHidden
+	lineageTag: b6d3b285-1889-4864-8517-b6ba0869f003
+
+	column DATE_KEY
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: DATE_KEY
+
+	column ITEM_KEY
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: ITEM_KEY
+
+	column OBSERVATION_DATE
+		dataType: dateTime
+		formatString: Long Date
+		summarizeBy: none
+		sourceColumn: OBSERVATION_DATE
+
+	column ITEM_ID
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: ITEM_ID
+
+	column UNITS
+		dataType: double
+		formatString: #,0
+		summarizeBy: sum
+		sourceColumn: UNITS
+
+	column REVENUE_USD
+		dataType: double
+		formatString: $#,0;($#,0);$#,0
+		summarizeBy: sum
+		sourceColumn: REVENUE_USD
+
+	column UNITS_LOWER_95
+		dataType: double
+		formatString: #,0
+		summarizeBy: sum
+		sourceColumn: UNITS_LOWER_95
+
+	column UNITS_UPPER_95
+		dataType: double
+		formatString: #,0
+		summarizeBy: sum
+		sourceColumn: UNITS_UPPER_95
+
+	column SERIES_TYPE
+		dataType: string
+		summarizeBy: none
+		sourceColumn: SERIES_TYPE
+
+	partition MART_FORECAST_VS_ACTUAL = m
+		mode: import
+		source =
+			let
+				Source = Snowflake.Databases(PBI_Snowflake_Account, PBI_Snowflake_Warehouse, [Role = PBI_Snowflake_Role, CreateNavigationProperties = false, Implementation = "2.0"]),
+				Database = Source{[Name = PBI_Snowflake_Database, Kind = "Database"]}[Data],
+				Marts = Database{[Name = "MARTS", Kind = "Schema"]}[Data],
+				Table = Marts{[Name = "MART_FORECAST_VS_ACTUAL", Kind = "Table"]}[Data]
+			in
+				Table

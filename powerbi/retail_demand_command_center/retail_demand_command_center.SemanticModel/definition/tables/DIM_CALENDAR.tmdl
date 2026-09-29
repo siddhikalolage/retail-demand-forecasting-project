@@ -1,0 +1,147 @@
+table DIM_CALENDAR
+	lineageTag: 42975f2c-8935-4a33-9612-c4fbb2b78d11
+	dataCategory: Time
+
+	column DATE_KEY
+		dataType: string
+		summarizeBy: none
+		sourceColumn: DATE_KEY
+
+	column CALENDAR_DATE
+		dataType: dateTime
+		isKey
+		formatString: Long Date
+		summarizeBy: none
+		sourceColumn: CALENDAR_DATE
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column D
+		dataType: string
+		summarizeBy: none
+		sourceColumn: D
+
+	column YEAR
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: YEAR
+
+	column QUARTER
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: QUARTER
+
+	column MONTH
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: MONTH
+
+	column MONTH_NAME
+		dataType: string
+		summarizeBy: none
+		sourceColumn: MONTH_NAME
+		sortByColumn: MONTH
+
+	column DAY_OF_MONTH
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: DAY_OF_MONTH
+
+	column DAY_OF_WEEK
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: DAY_OF_WEEK
+
+	column DAY_NAME
+		dataType: string
+		summarizeBy: none
+		sourceColumn: DAY_NAME
+		sortByColumn: DAY_OF_WEEK
+
+	column WEEK_OF_YEAR
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: WEEK_OF_YEAR
+
+	column IS_WEEKEND
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: IS_WEEKEND
+
+	column WM_YR_WK
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: WM_YR_WK
+
+	column EVENT_NAME_1
+		dataType: string
+		summarizeBy: none
+		sourceColumn: EVENT_NAME_1
+
+	column EVENT_TYPE_1
+		dataType: string
+		summarizeBy: none
+		sourceColumn: EVENT_TYPE_1
+
+	column EVENT_NAME_2
+		dataType: string
+		summarizeBy: none
+		sourceColumn: EVENT_NAME_2
+
+	column EVENT_TYPE_2
+		dataType: string
+		summarizeBy: none
+		sourceColumn: EVENT_TYPE_2
+
+	column IS_HOLIDAY
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: IS_HOLIDAY
+
+	column SNAP_CA
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: SNAP_CA
+
+	column SNAP_TX
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: SNAP_TX
+
+	column SNAP_WI
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: SNAP_WI
+
+	column MONTH_START = DATE(DIM_CALENDAR[YEAR], DIM_CALENDAR[MONTH], 1)
+		dataType: dateTime
+		formatString: MMM yyyy
+		summarizeBy: none
+
+	column YEAR_MONTH = FORMAT(DIM_CALENDAR[CALENDAR_DATE], "yyyy-MM")
+		dataType: string
+		summarizeBy: none
+		sortByColumn: MONTH_START
+
+	column 'Day Type' = IF(DIM_CALENDAR[IS_WEEKEND], "Weekend", "Weekday")
+		dataType: string
+		summarizeBy: none
+
+	column 'SNAP Day Type' = IF(DIM_CALENDAR[SNAP_CA] = 1 || DIM_CALENDAR[SNAP_TX] = 1 || DIM_CALENDAR[SNAP_WI] = 1, "SNAP Day", "Non-SNAP Day")
+		dataType: string
+		summarizeBy: none
+
+	column 'Calendar Coverage' = IF(ISBLANK(DIM_CALENDAR[D]), "Forecast horizon", "Historical actuals")
+		dataType: string
+		summarizeBy: none
+
+	partition DIM_CALENDAR = m
+		mode: import
+		source =
+			let
+				Source = Snowflake.Databases(PBI_Snowflake_Account, PBI_Snowflake_Warehouse, [Role = PBI_Snowflake_Role, CreateNavigationProperties = false, Implementation = "2.0"]),
+				Database = Source{[Name = PBI_Snowflake_Database, Kind = "Database"]}[Data],
+				Warehouse = Database{[Name = "WAREHOUSE", Kind = "Schema"]}[Data],
+				Table = Warehouse{[Name = "DIM_CALENDAR", Kind = "Table"]}[Data]
+			in
+				Table

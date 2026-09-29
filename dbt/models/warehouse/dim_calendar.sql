@@ -9,7 +9,7 @@
 -- page joins forecast.date_key → dim_calendar.date_key). Future rows carry
 -- date-derived attributes only; M5-specific attrs (d, wm_yr_wk, event_*,
 -- snap_*) are NULL — see _warehouse__models.yml tests scoped historical-only.
--- See DBT_PIPELINE.md for the full walkthrough.
+-- See README.md for the local build workflow.
 
 WITH source AS (
     SELECT

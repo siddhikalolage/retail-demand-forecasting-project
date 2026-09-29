@@ -3,7 +3,7 @@
 -- Grain: one row per (store_id, item_id, sale_date).
 -- LEFT JOIN to prices preserves sales rows that have no matching price;
 -- revenue_amount_usd is NULL in that case ("price unknown", not "zero revenue").
--- See DBT_PIPELINE.md for the full walkthrough.
+-- See README.md for the local build workflow.
 
 WITH sales AS (
     SELECT * FROM {{ ref('stg_m5_sales_train') }}

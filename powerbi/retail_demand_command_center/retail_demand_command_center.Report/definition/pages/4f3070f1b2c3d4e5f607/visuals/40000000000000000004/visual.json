@@ -1,0 +1,84 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+    "name":  "40000000000000000004",
+    "position":  {
+                     "x":  1310,
+                     "y":  24,
+                     "z":  13,
+                     "height":  46,
+                     "width":  100,
+                     "tabOrder":  13
+                 },
+    "visual":  {
+                   "visualType":  "slicer",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Values":  {
+                                                                   "projections":  [
+                                                                                       {
+                                                                                           "field":  {
+                                                                                                         "Column":  {
+                                                                                                                        "Expression":  {
+                                                                                                                                           "SourceRef":  {
+                                                                                                                                                             "Entity":  "DIM_ITEM"
+                                                                                                                                                         }
+                                                                                                                                       },
+                                                                                                                        "Property":  "ITEM_ID"
+                                                                                                                    }
+                                                                                                     },
+                                                                                           "queryRef":  "DIM_ITEM.ITEM_ID",
+                                                                                           "nativeQueryRef":  "ITEM_ID"
+                                                                                       }
+                                                                                   ]
+                                                               }
+                                                }
+                             },
+                   "objects":  {
+                                   "data":  [
+                                                {
+                                                    "properties":  {
+                                                                       "mode":  {
+                                                                                    "expr":  {
+                                                                                                 "Literal":  {
+                                                                                                                 "Value":  "\u0027Dropdown\u0027"
+                                                                                                             }
+                                                                                             }
+                                                                                }
+                                                                   }
+                                                }
+                                            ],
+                                   "general":  [
+                                                   {
+                                                       "properties":  {
+                                                                          "orientation":  {
+                                                                                              "expr":  {
+                                                                                                           "Literal":  {
+                                                                                                                           "Value":  "\u00271D\u0027"
+                                                                                                                       }
+                                                                                                       }
+                                                                                          }
+                                                                      }
+                                                   }
+                                               ],
+                                   "header":  [
+                                                  {
+                                                      "properties":  {
+                                                                         "text":  {
+                                                                                      "expr":  {
+                                                                                                   "Literal":  {
+                                                                                                                   "Value":  "\u0027Item\u0027"
+                                                                                                               }
+                                                                                               }
+                                                                                  }
+                                                                     }
+                                                  }
+                                              ]
+                               },
+                   "syncGroup":  {
+                                     "groupName":  "DIM_ITEM_ITEM_ID",
+                                     "fieldChanges":  true,
+                                     "filterChanges":  true
+                                 }
+               },
+    "drillFilterOtherVisuals":  true
+}

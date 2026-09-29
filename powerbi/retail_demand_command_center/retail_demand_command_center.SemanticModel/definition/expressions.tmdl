@@ -1,0 +1,18 @@
+expression PBI_Snowflake_Account = "<your-account>.<your-region>.snowflakecomputing.com"
+	lineageTag: 64115bc9-df11-4ef3-a6f5-e5375a4c3201
+	annotation PBI_ResultType = Text
+
+expression PBI_Snowflake_Warehouse = "WH_RETAIL"
+
+	lineageTag: 3af440af-b8e3-4212-b482-84bda59124ca
+	annotation PBI_ResultType = Text
+
+expression PBI_Snowflake_Role = "POWERBI_READER"
+
+	lineageTag: 3cc782ae-2186-4b07-a3ea-9a776f3742ae
+	annotation PBI_ResultType = Text
+
+expression PBI_Snowflake_Database = "RETAIL_DB"
+
+	lineageTag: 27e69888-bfcd-4aa0-b438-408006296e12
+	annotation PBI_ResultType = Text

@@ -8,7 +8,7 @@
 -- Idempotent. Run as ACCOUNTADMIN via Snowsight. SHOW GRANTS at the end
 -- proves only USAGE + SELECT — no write privileges anywhere.
 --
--- See POWERBI_PIPELINE.md for the principle-of-least-privilege walkthrough.
+-- The PBIP model uses this least-privileged reader role for dashboard refresh.
 -- Phase: 5 — Power BI + forecasting (session 1)
 -- =============================================================================
 
@@ -56,8 +56,7 @@ USE WAREHOUSE WH_RETAIL;
 USE DATABASE  RETAIL_DB;
 USE SCHEMA    MARTS;
 
--- Smoke test updated 2026-05-20 (Phase 5.4) — replaces stale
--- MART_EXECUTIVE_OVERVIEW reference (renamed to AGG_SALES_DAILY in 5.3).
+-- Smoke test the two dashboard-facing objects.
 SELECT COUNT(*) AS agg_row_count  FROM RETAIL_DB.MARTS.AGG_SALES_DAILY;
 SELECT COUNT(*) AS fact_row_count FROM RETAIL_DB.WAREHOUSE.FACT_DAILY_SALES;
 
@@ -67,4 +66,4 @@ SHOW GRANTS TO ROLE POWERBI_READER;
 -- Negative boundary test — uncomment to prove POWERBI_READER cannot SELECT
 -- from schemas it has no USAGE on (RAW / STAGING / INTERMEDIATE).
 -- Expected outcome: "Object does not exist or not authorized."
--- SELECT COUNT(*) FROM RETAIL_DB.RAW.M5_SALES_TRAIN;
+-- SELECT COUNT(*) FROM RETAIL_DB.RAW.SALES_TRAIN;

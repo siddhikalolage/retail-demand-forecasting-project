@@ -1,0 +1,27 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.3.0/schema.json",
+    "themeCollection":  {
+                            "customTheme":  {
+                                                "name":  "RetailCommandCenter",
+                                                "type":  "SharedResources"
+                                            }
+                        },
+    "settings":  {
+                     "useEnhancedTooltips":  true,
+                     "exportDataMode":  "AllowSummarized",
+                     "filterPaneHiddenInEditMode":  true
+                 },
+    "resourcePackages":  [
+                             {
+                                 "name":  "SharedResources",
+                                 "type":  "SharedResources",
+                                 "items":  [
+                                               {
+                                                   "name":  "RetailCommandCenter",
+                                                   "path":  "BuiltInThemes/RetailCommandCenter.json",
+                                                   "type":  "CustomTheme"
+                                               }
+                                           ]
+                             }
+                         ]
+}

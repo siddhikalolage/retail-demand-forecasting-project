@@ -1,0 +1,37 @@
+table DIM_ITEM
+	lineageTag: 42c9636b-1a81-482d-a52f-19e9447d087c
+
+	column ITEM_KEY
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ITEM_KEY
+
+	column ITEM_ID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ITEM_ID
+
+	column DEPT_ID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: DEPT_ID
+
+	column CAT_ID
+		dataType: string
+		summarizeBy: none
+		sourceColumn: CAT_ID
+
+	column 'Product Hierarchy' = DIM_ITEM[CAT_ID] & " | " & DIM_ITEM[DEPT_ID]
+		dataType: string
+		summarizeBy: none
+
+	partition DIM_ITEM = m
+		mode: import
+		source =
+			let
+				Source = Snowflake.Databases(PBI_Snowflake_Account, PBI_Snowflake_Warehouse, [Role = PBI_Snowflake_Role, CreateNavigationProperties = false, Implementation = "2.0"]),
+				Database = Source{[Name = PBI_Snowflake_Database, Kind = "Database"]}[Data],
+				Warehouse = Database{[Name = "WAREHOUSE", Kind = "Schema"]}[Data],
+				Table = Warehouse{[Name = "DIM_ITEM", Kind = "Table"]}[Data]
+			in
+				Table

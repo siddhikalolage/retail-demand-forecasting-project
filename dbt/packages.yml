@@ -1,6 +1,6 @@
 # packages.yml — external dbt package dependencies.
 # Run `dbt deps` after editing to fetch into dbt_packages/.
-# See DBT_PIPELINE.md for the full walkthrough.
+# See README.md for the local dbt workflow.
 
 packages:
   - package: dbt-labs/dbt_utils

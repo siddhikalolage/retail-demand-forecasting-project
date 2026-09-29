@@ -1,7 +1,8 @@
 -- dbt/tests/data_tests/fact_daily_sales_freshness.sql
 -- 
--- Validates that fact table has data for most recent available date in calendar.
--- Fails if fact table lags calendar by more than 1 day.
+-- Validates that the sales fact has data for the latest *historical* date.
+-- dim_calendar intentionally appends future rows for the forecast horizon, so
+-- those rows must not be included in this freshness comparison.
 --
 -- Purpose: Catches if incremental loads have stalled or data hasn't been extracted.
 --
@@ -14,7 +15,9 @@ WITH fact_max_date AS (
     SELECT MAX(sale_date) AS max_fact_date FROM {{ ref('fact_daily_sales') }}
 ),
 calendar_max_date AS (
-    SELECT MAX(calendar_date) AS max_calendar_date FROM {{ ref('dim_calendar') }}
+    SELECT MAX(calendar_date) AS max_calendar_date
+    FROM {{ ref('dim_calendar') }}
+    WHERE d IS NOT NULL
 ),
 comparison AS (
     SELECT

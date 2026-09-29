@@ -8,9 +8,6 @@
 # stable we'll generate a frozen lock file with `pip freeze > requirements-lock.txt`.
 # =============================================================================
 
-# Kaggle CLI for M5 dataset download
-kaggle>=1.6.0
-
 # Environment variable loading from .env
 python-dotenv>=1.0.0
 

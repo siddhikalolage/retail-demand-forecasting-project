@@ -1,8 +1,8 @@
 # =============================================================================
 # profiles.yml — Snowflake connection
 # =============================================================================
-# See DBT_PIPELINE.md at project root for the full walkthrough. Secrets
-# are read from .env at run time via env_var() — file is safe to commit.
+# See README.md for local setup. Secrets are read from .env at run time via
+# env_var(), so this template is safe to commit.
 # =============================================================================
 
 retail_demand_forecasting:

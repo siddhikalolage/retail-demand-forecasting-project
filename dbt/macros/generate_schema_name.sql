@@ -6,7 +6,7 @@
     override uses the +schema: value directly, so models land in
     clean schemas (STAGING, INTERMEDIATE, WAREHOUSE, MARTS).
 
-    See DBT_PIPELINE.md for the full walkthrough.
+    See README.md for the local build workflow.
 #}
 
 {% macro generate_schema_name(custom_schema_name, node) -%}
