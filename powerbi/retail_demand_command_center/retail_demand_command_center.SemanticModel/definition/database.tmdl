@@ -1,5 +1,3 @@
-database RetailDemandCommandCenter
+database
 
-	compatibilityLevel: 1605
-
-	modelId: 7b19c1d6-10a9-42c7-a699-4b4a902f81b3
+	compatibilityLevel: 1600
