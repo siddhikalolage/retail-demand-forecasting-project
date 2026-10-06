@@ -1,4 +1,4 @@
-expression PBI_Snowflake_Account = "<your-account>.<your-region>.snowflakecomputing.com"
+expression PBI_Snowflake_Account = "tq94402.ap-southeast-2.snowflakecomputing.com"
 	lineageTag: 64115bc9-df11-4ef3-a6f5-e5375a4c3201
 	annotation PBI_ResultType = Text
 
