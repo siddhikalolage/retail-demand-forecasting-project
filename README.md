@@ -48,6 +48,12 @@ already been validated.
 3. In the semantic model, set the four expressions in `definition/expressions.tmdl` for your Snowflake account, warehouse, role, and database. The default role is `POWERBI_READER`; no account endpoint or credentials are committed.
 4. Refresh and confirm that the Snowflake reader role has the grants in `sql/snowflake/04_grant_powerbi_reader.sql`.
 
+For the row-count smoke test, relationship checks, measure catalog, and the
+manual five-page design plan, see
+[`powerbi/POWERBI_MANUAL_BUILD_GUIDE.md`](powerbi/POWERBI_MANUAL_BUILD_GUIDE.md).
+The corresponding Snowflake validation script is
+[`sql/snowflake/06_powerbi_smoke_test.sql`](sql/snowflake/06_powerbi_smoke_test.sql).
+
 To regenerate the report-definition JSON from the documented layout, run:
 
 ```powershell

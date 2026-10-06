@@ -23,13 +23,15 @@ table _Measures
 		formatString: 0.0%;(0.0%);0.0%
 
 	measure 'Revenue 30D Average' =
-		VAR DatesToAverage = DATESINPERIOD(DIM_CALENDAR[CALENDAR_DATE], MAX(DIM_CALENDAR[CALENDAR_DATE]), -30, DAY)
-		RETURN AVERAGEX(DatesToAverage, [Total Revenue])
+		VAR LatestActualDate = MAX(FACT_DAILY_SALES[SALE_DATE])
+		VAR DatesToAverage = DATESINPERIOD(DIM_CALENDAR[CALENDAR_DATE], LatestActualDate, -30, DAY)
+		RETURN IF(ISBLANK(LatestActualDate), BLANK(), AVERAGEX(DatesToAverage, [Total Revenue]))
 		formatString: $#,0;($#,0);$#,0
 
 	measure 'Units 30D Average' =
-		VAR DatesToAverage = DATESINPERIOD(DIM_CALENDAR[CALENDAR_DATE], MAX(DIM_CALENDAR[CALENDAR_DATE]), -30, DAY)
-		RETURN AVERAGEX(DatesToAverage, [Total Units])
+		VAR LatestActualDate = MAX(FACT_DAILY_SALES[SALE_DATE])
+		VAR DatesToAverage = DATESINPERIOD(DIM_CALENDAR[CALENDAR_DATE], LatestActualDate, -30, DAY)
+		RETURN IF(ISBLANK(LatestActualDate), BLANK(), AVERAGEX(DatesToAverage, [Total Units]))
 		formatString: #,0
 
 	measure 'Units vs 30D Average %' = DIVIDE([Total Units] - [Units 30D Average], [Units 30D Average])
@@ -47,23 +49,32 @@ table _Measures
 	measure 'Holiday Revenue Share %' = DIVIDE(CALCULATE([Total Revenue], DIM_CALENDAR[IS_HOLIDAY] = TRUE()), [Total Revenue])
 		formatString: 0.0%;(0.0%);0.0%
 
-	measure 'SNAP Revenue Share %' = DIVIDE(CALCULATE([Total Revenue], DIM_CALENDAR['SNAP Day Type'] = "SNAP Day"), [Total Revenue])
+	measure 'SNAP Revenue Share %' = DIVIDE(CALCULATE([Total Revenue], DIM_CALENDAR[SNAP Day Type] = "SNAP Day"), [Total Revenue])
 		formatString: 0.0%;(0.0%);0.0%
 
-	measure 'Actual Units' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[UNITS]), MART_FORECAST_VS_ACTUAL[SERIES_TYPE] = "actual")
+	measure 'Actual Units' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[UNITS]), KEEPFILTERS(MART_FORECAST_VS_ACTUAL[SERIES_TYPE] = "actual"))
 		formatString: #,0
 
-	measure 'Forecast Units' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[UNITS]), MART_FORECAST_VS_ACTUAL[SERIES_TYPE] = "forecast")
+	measure 'Forecast Units' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[UNITS]), KEEPFILTERS(MART_FORECAST_VS_ACTUAL[SERIES_TYPE] = "forecast"))
 		formatString: #,0
 
-	measure 'Forecast Revenue' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[REVENUE_USD]), MART_FORECAST_VS_ACTUAL[SERIES_TYPE] = "forecast")
+	measure 'Forecast Revenue' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[REVENUE_USD]), KEEPFILTERS(MART_FORECAST_VS_ACTUAL[SERIES_TYPE] = "forecast"))
 		formatString: $#,0;($#,0);$#,0
 
-	measure 'Forecast Lower 95' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[UNITS_LOWER_95]), MART_FORECAST_VS_ACTUAL[SERIES_TYPE] = "forecast")
+	measure 'Forecast Lower 95' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[UNITS_LOWER_95]), KEEPFILTERS(MART_FORECAST_VS_ACTUAL[SERIES_TYPE] = "forecast"))
 		formatString: #,0
 
-	measure 'Forecast Upper 95' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[UNITS_UPPER_95]), MART_FORECAST_VS_ACTUAL[SERIES_TYPE] = "forecast")
+	measure 'Forecast Upper 95' = CALCULATE(SUM(MART_FORECAST_VS_ACTUAL[UNITS_UPPER_95]), KEEPFILTERS(MART_FORECAST_VS_ACTUAL[SERIES_TYPE] = "forecast"))
 		formatString: #,0
+
+	measure 'Forecast Coverage Days' = CALCULATE(DISTINCTCOUNT(MART_FORECAST_VS_ACTUAL[OBSERVATION_DATE]), KEEPFILTERS(MART_FORECAST_VS_ACTUAL[SERIES_TYPE] = "forecast"))
+		formatString: #,0
+
+	measure 'Forecast Start Date' = CALCULATE(MIN(MART_FORECAST_VS_ACTUAL[OBSERVATION_DATE]), KEEPFILTERS(MART_FORECAST_VS_ACTUAL[SERIES_TYPE] = "forecast"))
+		formatString: yyyy-mm-dd
+
+	measure 'Forecast End Date' = CALCULATE(MAX(MART_FORECAST_VS_ACTUAL[OBSERVATION_DATE]), KEEPFILTERS(MART_FORECAST_VS_ACTUAL[SERIES_TYPE] = "forecast"))
+		formatString: yyyy-mm-dd
 
 	measure 'Forecast Interval Width %' = DIVIDE([Forecast Upper 95] - [Forecast Lower 95], [Forecast Units])
 		formatString: 0.0%;(0.0%);0.0%
@@ -72,8 +83,8 @@ table _Measures
 		SWITCH(
 			TRUE(),
 			ISBLANK([Forecast Units]), "No forecast in current selection",
-			[Forecast Interval Width %] > 0.75, "High uncertainty — plan conservatively",
-			[Forecast Interval Width %] > 0.40, "Monitor — widen replenishment buffer",
+			[Forecast Interval Width %] > 0.75, "High uncertainty - plan conservatively",
+			[Forecast Interval Width %] > 0.40, "Monitor - widen replenishment buffer",
 			"Planning-ready"
 		)
 
@@ -98,11 +109,11 @@ table _Measures
 	measure 'Recommended Action' =
 		SWITCH(
 			TRUE(),
-			[Forecast Risk Status] = "High uncertainty — plan conservatively", "Use a conservative reorder quantity and review inputs before release.",
+			[Forecast Risk Status] = "High uncertainty - plan conservatively", "Use a conservative reorder quantity and review inputs before release.",
 			[Demand Signal] = "Demand accelerating", "Prioritize replenishment for accelerating item-store combinations.",
 			[Demand Signal] = "Demand softening", "Investigate price, event, and local availability drivers before replenishment.",
 			[Pricing Signal] = "Price increase with demand decline", "Test a targeted price adjustment or promotion; monitor margin impact.",
 			"Maintain the current plan and monitor the next refresh."
 		)
 
-	measure 'Model Coverage Status' = IF(ISBLANK([Forecast Units]), "Historical view — no forecast available", "Forecast coverage available")
+	measure 'Model Coverage Status' = IF(ISBLANK([Forecast Units]), "Historical view - no forecast available", "Forecast coverage available")

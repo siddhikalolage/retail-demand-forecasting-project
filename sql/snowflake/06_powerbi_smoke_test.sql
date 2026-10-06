@@ -1,0 +1,58 @@
+-- 06_powerbi_smoke_test.sql
+-- Run as POWERBI_READER after dbt has built the dashboard-facing models.
+-- Every count below must be greater than zero before Power BI can display data.
+
+USE ROLE POWERBI_READER;
+USE WAREHOUSE WH_RETAIL;
+USE DATABASE RETAIL_DB;
+
+-- 1) Row availability and date coverage.
+SELECT 'DIM_CALENDAR' AS object_name, COUNT(*) AS row_count,
+       MIN(CALENDAR_DATE) AS first_date, MAX(CALENDAR_DATE) AS last_date
+FROM WAREHOUSE.DIM_CALENDAR
+UNION ALL
+SELECT 'DIM_ITEM', COUNT(*), NULL, NULL
+FROM WAREHOUSE.DIM_ITEM
+UNION ALL
+SELECT 'DIM_STORE', COUNT(*), NULL, NULL
+FROM WAREHOUSE.DIM_STORE
+UNION ALL
+SELECT 'FACT_DAILY_SALES', COUNT(*), MIN(SALE_DATE), MAX(SALE_DATE)
+FROM WAREHOUSE.FACT_DAILY_SALES
+UNION ALL
+SELECT 'MART_FORECAST_VS_ACTUAL', COUNT(*), MIN(OBSERVATION_DATE), MAX(OBSERVATION_DATE)
+FROM MARTS.MART_FORECAST_VS_ACTUAL;
+
+-- 2) The mart must contain both series. A missing forecast series means the
+-- Cortex output and/or dbt forecast models have not been built yet.
+SELECT SERIES_TYPE, COUNT(*) AS row_count,
+       MIN(OBSERVATION_DATE) AS first_date,
+       MAX(OBSERVATION_DATE) AS last_date
+FROM MARTS.MART_FORECAST_VS_ACTUAL
+GROUP BY SERIES_TYPE
+ORDER BY SERIES_TYPE;
+
+-- 3) Key integrity checks used by the Power BI relationships.
+SELECT 'fact_orphan_items' AS check_name, COUNT(*) AS failures
+FROM WAREHOUSE.FACT_DAILY_SALES f
+LEFT JOIN WAREHOUSE.DIM_ITEM i ON f.ITEM_KEY = i.ITEM_KEY
+WHERE i.ITEM_KEY IS NULL
+UNION ALL
+SELECT 'fact_orphan_stores', COUNT(*)
+FROM WAREHOUSE.FACT_DAILY_SALES f
+LEFT JOIN WAREHOUSE.DIM_STORE s ON f.STORE_KEY = s.STORE_KEY
+WHERE s.STORE_KEY IS NULL
+UNION ALL
+SELECT 'fact_orphan_dates', COUNT(*)
+FROM WAREHOUSE.FACT_DAILY_SALES f
+LEFT JOIN WAREHOUSE.DIM_CALENDAR c ON f.DATE_KEY = c.DATE_KEY
+WHERE c.DATE_KEY IS NULL
+UNION ALL
+SELECT 'forecast_invalid_intervals', COUNT(*)
+FROM MARTS.MART_FORECAST_VS_ACTUAL
+WHERE SERIES_TYPE = 'forecast'
+  AND (UNITS_LOWER_95 IS NULL OR UNITS_UPPER_95 IS NULL
+       OR UNITS_LOWER_95 > UNITS_UPPER_95);
+
+-- 4) The Power BI role must be able to read every object used by the PBIP.
+SHOW GRANTS TO ROLE POWERBI_READER;
