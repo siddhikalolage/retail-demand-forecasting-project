@@ -225,7 +225,11 @@ Write-JsonFile (Join-Path $reportRoot "StaticResources\SharedResources\BuiltInTh
 Write-JsonFile (Join-Path $reportRoot "definition\report.json") ([pscustomobject]@{
     '$schema' = "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.3.0/schema.json"
     themeCollection = [pscustomobject]@{
-        customTheme = [pscustomobject]@{ name = "RetailCommandCenter"; type = "SharedResources" }
+        customTheme = [pscustomobject]@{
+            name = "RetailCommandCenter"
+            reportVersionAtImport = [pscustomobject]@{ visual = "2.9.0"; report = "3.3.0"; page = "2.3.1" }
+            type = "SharedResources"
+        }
     }
     settings = [pscustomobject]@{ useEnhancedTooltips = $true; exportDataMode = "AllowSummarized"; filterPaneHiddenInEditMode = $true }
     resourcePackages = @([pscustomobject]@{ name = "SharedResources"; type = "SharedResources"; items = @([pscustomobject]@{ name = "RetailCommandCenter"; path = "BuiltInThemes/RetailCommandCenter.json"; type = "CustomTheme" }) })

@@ -3,6 +3,11 @@
     "themeCollection":  {
                             "customTheme":  {
                                                 "name":  "RetailCommandCenter",
+                                                "reportVersionAtImport":  {
+                                                                              "visual":  "2.9.0",
+                                                                              "report":  "3.3.0",
+                                                                              "page":  "2.3.1"
+                                                                          },
                                                 "type":  "SharedResources"
                                             }
                         },
